@@ -47,6 +47,17 @@ public class Main {
 
                     try {
                         currentUser = authService.login(email, password);
+                        
+                        // Check if customer is active
+                        if (currentUser.getRole() == Role.CUSTOMER) {
+                            Customer customer = fbs.getCustomerByID(currentUser.getCustomerId());
+                            if (!customer.isActive()) {
+                                System.out.println("Login failed: Your account has been deactivated. Please contact administrator.");
+                                currentUser = null;
+                                continue;
+                            }
+                        }
+                        
                         System.out.println("Login successful. Welcome " + currentUser.getFullName()
                                 + " [" + currentUser.getRole() + "]");
                         if (currentUser.getRole() == Role.CUSTOMER) {
@@ -192,6 +203,7 @@ public class Main {
     private static void runCommandMode(BufferedReader br, FlightBookingSystem fbs) throws IOException {
 
         System.out.println();
+        System.out.println("System Date: " + fbs.getSystemDate());
         System.out.println("Enter 'help' to see available commands.");
         System.out.println("Type 'logout' to logout.");
         System.out.println("Type 'exit' to exit the program.");
@@ -225,7 +237,7 @@ public class Main {
                     String lower = trimmed.toLowerCase();
 
                     if (lower.startsWith("addflight") || lower.startsWith("addcustomer")
-                            || lower.startsWith("listcustomers")) {
+                            || lower.startsWith("listcustomers") || lower.startsWith("advancedate")) {
                         System.out.println("Only admin can use this command.");
                         continue;
                     }
@@ -254,7 +266,7 @@ public class Main {
                     }
                 }
 
-                Command command = CommandParser.parse(trimmed, currentUser.getRole());
+                Command command = CommandParser.parse(trimmed, currentUser.getRole(), currentUser);
                 command.execute(fbs);
 
                 FlightBookingSystemData.store(fbs);

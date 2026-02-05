@@ -15,6 +15,10 @@ public interface Command {
             + "\taddbooking [customer id] [flight id]      add a new booking\n"
             + "\tcancelbooking [customer id] [flight id]   cancel a booking\n"
             + "\tupdatebooking [customer id] [old flight id] [new flight id]\tupdate a booking\n"
+            + "\tadvancedate [YYYY-MM-DD]                  advance the system date (admin only)\n"
+            + "\tdeactivatecustomer [customer id]          deactivate a customer account\n"
+            + "\treactivatecustomer [customer id]          reactivate a customer account\n"
+            + "\tdeactivateflight [flight id]              deactivate a flight\n"
             + "\tloadgui                                   loads the GUI version of the app\n"
             + "\thelp                                      prints this help message\n"
             + "\texit                                      exits the program";

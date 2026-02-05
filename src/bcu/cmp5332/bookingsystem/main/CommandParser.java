@@ -1,16 +1,21 @@
 package bcu.cmp5332.bookingsystem.main;
 
 import bcu.cmp5332.bookingsystem.auth.Role;
+import bcu.cmp5332.bookingsystem.auth.User;
 import bcu.cmp5332.bookingsystem.commands.AddBooking;
 import bcu.cmp5332.bookingsystem.commands.AddCustomer;
 import bcu.cmp5332.bookingsystem.commands.AddFlight;
+import bcu.cmp5332.bookingsystem.commands.AdvanceDate;
 import bcu.cmp5332.bookingsystem.commands.CancelBooking;
 import bcu.cmp5332.bookingsystem.commands.Command;
+import bcu.cmp5332.bookingsystem.commands.DeactivateCustomer;
+import bcu.cmp5332.bookingsystem.commands.DeactivateFlight;
 import bcu.cmp5332.bookingsystem.commands.EditBooking;
 import bcu.cmp5332.bookingsystem.commands.Help;
 import bcu.cmp5332.bookingsystem.commands.ListCustomers;
 import bcu.cmp5332.bookingsystem.commands.ListFlights;
 import bcu.cmp5332.bookingsystem.commands.LoadGUI;
+import bcu.cmp5332.bookingsystem.commands.ReactivateCustomer;
 import bcu.cmp5332.bookingsystem.commands.ShowCustomer;
 import bcu.cmp5332.bookingsystem.commands.ShowFlight;
 import bcu.cmp5332.bookingsystem.commands.UpdateBooking;
@@ -31,11 +36,12 @@ public class CommandParser {
      *
      * @param line the command line input
      * @param role the user's role
+     * @param user the current user
      * @return a Command object
      * @throws IOException if input reading fails
      * @throws FlightBookingSystemException if command is invalid
      */
-    public static Command parse(String line, Role role) throws IOException, FlightBookingSystemException {
+    public static Command parse(String line, Role role, User user) throws IOException, FlightBookingSystemException {
         line = line.trim();
 
         if (line.isEmpty()) {
@@ -82,6 +88,14 @@ public class CommandParser {
                 return new LoadGUI();
             }
 
+            if (cmd.equals("advancedate")) {
+                if (parts.length != 2) {
+                    throw new FlightBookingSystemException("Usage: advancedate YYYY-MM-DD");
+                }
+                LocalDate newDate = LocalDate.parse(parts[1]);
+                return new AdvanceDate(newDate);
+            }
+
             if (parts.length == 1) {
                 if (cmd.equals("listflights")) {
                     return new ListFlights();
@@ -99,6 +113,12 @@ public class CommandParser {
                     return new ShowFlight(id);
                 } else if (cmd.equals("showcustomer")) {
                     return new ShowCustomer(id);
+                } else if (cmd.equals("deactivatecustomer")) {
+                    return new DeactivateCustomer(id, user);
+                } else if (cmd.equals("reactivatecustomer")) {
+                    return new ReactivateCustomer(id, user);
+                } else if (cmd.equals("deactivateflight")) {
+                    return new DeactivateFlight(id, user);
                 }
             }
 

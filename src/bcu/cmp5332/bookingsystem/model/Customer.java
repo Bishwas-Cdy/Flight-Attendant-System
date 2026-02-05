@@ -15,6 +15,7 @@ public class Customer {
     private int id;
     private String name;
     private String phone;
+    private boolean active = true;
 
     private final List<Booking> bookings = new ArrayList<>();
 
@@ -162,5 +163,26 @@ public class Customer {
      */
     public List<Booking> getBookings() {
         return bookings;
+    }
+
+    /**
+     * Indicates whether the customer account is active.
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Deactivates the customer account.
+     */
+    public void deactivate() {
+        this.active = false;
+    }
+
+    /**
+     * Reactivates the customer account.
+     */
+    public void reactivate() {
+        this.active = true;
     }
 }

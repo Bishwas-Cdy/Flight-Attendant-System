@@ -28,6 +28,15 @@ public class AddBooking implements Command {
         Customer customer = fbs.getCustomerByID(customerId);
         Flight flight = fbs.getFlightByID(flightId);
 
+        // Soft delete check
+        if (!customer.isActive()) {
+            throw new FlightBookingSystemException("Customer account is inactive.");
+        }
+
+        if (!flight.isActive()) {
+            throw new FlightBookingSystemException("Flight is inactive and cannot be booked.");
+        }
+
         // Past-flight restriction
         if (flight.getDepartureDate().isBefore(fbs.getSystemDate())) {
             throw new FlightBookingSystemException("Cannot add booking. Flight has already departed.");

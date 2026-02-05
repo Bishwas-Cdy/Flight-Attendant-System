@@ -10,9 +10,13 @@ public class ListCustomers implements Command {
 
     @Override
     public void execute(FlightBookingSystem flightBookingSystem) {
+        int count = 0;
         for (Customer c : flightBookingSystem.getCustomers()) {
-            System.out.println(c.getDetailsShort());
+            if (c.isActive()) {
+                System.out.println(c.getDetailsShort());
+                count++;
+            }
         }
-        System.out.println(flightBookingSystem.getCustomers().size() + " customer(s)");
+        System.out.println(count + " customer(s)");
     }
 }

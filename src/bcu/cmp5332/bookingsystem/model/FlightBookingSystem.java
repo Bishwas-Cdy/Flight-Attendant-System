@@ -15,13 +15,25 @@ import java.util.TreeMap;
  */
 public class FlightBookingSystem {
 
-    private final LocalDate systemDate = LocalDate.parse("2024-11-11");
+    private LocalDate systemDate = LocalDate.parse("2024-11-11");
 
     private final Map<Integer, Customer> customers = new TreeMap<>();
     private final Map<Integer, Flight> flights = new TreeMap<>();
 
     public LocalDate getSystemDate() {
         return systemDate;
+    }
+
+    /**
+     * Sets the system date (admin command will validate rules).
+     *
+     * @param systemDate new system date
+     */
+    public void setSystemDate(LocalDate systemDate) {
+        if (systemDate == null) {
+            throw new IllegalArgumentException("System date cannot be null.");
+        }
+        this.systemDate = systemDate;
     }
 
     public List<Flight> getFlights() {

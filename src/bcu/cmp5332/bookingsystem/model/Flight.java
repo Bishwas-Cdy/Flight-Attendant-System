@@ -22,6 +22,7 @@ public class Flight {
     // New fields
     private int capacity;
     private double basePrice;
+    private boolean active = true;
 
     private Set<Customer> passengers = new HashSet<>();
 
@@ -147,6 +148,27 @@ public class Flight {
      */
     public double getBasePrice() {
         return basePrice;
+    }
+
+    /**
+     * Indicates whether the flight is active.
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Deactivates the flight.
+     */
+    public void deactivate() {
+        this.active = false;
+    }
+
+    /**
+     * Reactivates the flight.
+     */
+    public void reactivate() {
+        this.active = true;
     }
 
     /**

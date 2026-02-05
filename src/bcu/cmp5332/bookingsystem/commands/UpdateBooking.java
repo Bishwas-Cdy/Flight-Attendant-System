@@ -31,6 +31,11 @@ public class UpdateBooking implements Command {
         Flight oldFlight = fbs.getFlightByID(oldFlightId);
         Flight newFlight = fbs.getFlightByID(newFlightId);
 
+        // Soft delete check
+        if (!customer.isActive()) {
+            throw new FlightBookingSystemException("Customer account is inactive.");
+        }
+
         if (oldFlightId == newFlightId) {
             throw new FlightBookingSystemException("Old flight and new flight cannot be the same.");
         }
@@ -38,6 +43,11 @@ public class UpdateBooking implements Command {
         // Past-flight restriction for the NEW flight
         if (newFlight.getDepartureDate().isBefore(fbs.getSystemDate())) {
             throw new FlightBookingSystemException("Cannot rebook. New flight has already departed.");
+        }
+
+        // Soft delete check for new flight
+        if (!newFlight.isActive()) {
+            throw new FlightBookingSystemException("New flight is inactive.");
         }
 
         Booking booking = findBooking(customer, oldFlightId);
