@@ -7,7 +7,7 @@ import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 /**
- * Command to add a booking.
+ * Adds a booking for a customer on a flight.
  */
 public class AddBooking implements Command {
 
@@ -20,15 +20,25 @@ public class AddBooking implements Command {
     }
 
     @Override
-    public void execute(FlightBookingSystem flightBookingSystem)
-            throws FlightBookingSystemException {
+    public void execute(FlightBookingSystem fbs) throws FlightBookingSystemException {
 
-        Customer customer = flightBookingSystem.getCustomerByID(customerId);
-        Flight flight = flightBookingSystem.getFlightByID(flightId);
+        Customer customer = fbs.getCustomerByID(customerId);
+        Flight flight = fbs.getFlightByID(flightId);
 
-        Booking booking = new Booking(customer, flight,
-                flightBookingSystem.getSystemDate());
+        // Capacity enforcement
+        int capacity = flight.getCapacity();
+        int currentPassengers = flight.getPassengers().size();
 
+        // If capacity is set (> 0) and flight is full, block booking
+        if (capacity > 0 && currentPassengers >= capacity) {
+            throw new FlightBookingSystemException(
+                    "Cannot add booking. Flight is full (" + capacity + " seats).");
+        }
+
+        // Create booking
+        Booking booking = new Booking(customer, flight, fbs.getSystemDate());
+
+        // Update relationships
         customer.addBooking(booking);
         flight.addPassenger(customer);
 
