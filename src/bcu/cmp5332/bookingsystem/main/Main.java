@@ -49,6 +49,9 @@ public class Main {
                         currentUser = authService.login(email, password);
                         System.out.println("Login successful. Welcome " + currentUser.getFullName()
                                 + " [" + currentUser.getRole() + "]");
+                        if (currentUser.getRole() == Role.CUSTOMER) {
+                            System.out.println("Your Customer ID is: " + currentUser.getCustomerId());
+                        }
                     } catch (FlightBookingSystemException ex) {
                         System.out.println(ex.getMessage());
                     }
