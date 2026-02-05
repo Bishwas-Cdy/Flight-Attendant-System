@@ -1,5 +1,6 @@
 package bcu.cmp5332.bookingsystem.main;
 
+import bcu.cmp5332.bookingsystem.auth.Role;
 import bcu.cmp5332.bookingsystem.commands.AddBooking;
 import bcu.cmp5332.bookingsystem.commands.AddCustomer;
 import bcu.cmp5332.bookingsystem.commands.AddFlight;
@@ -29,11 +30,12 @@ public class CommandParser {
      * Parses a command line and returns the appropriate Command object.
      *
      * @param line the command line input
+     * @param role the user's role
      * @return a Command object
      * @throws IOException if input reading fails
      * @throws FlightBookingSystemException if command is invalid
      */
-    public static Command parse(String line) throws IOException, FlightBookingSystemException {
+    public static Command parse(String line, Role role) throws IOException, FlightBookingSystemException {
         line = line.trim();
 
         if (line.isEmpty()) {
@@ -86,7 +88,7 @@ public class CommandParser {
                 } else if (cmd.equals("listcustomers")) {
                     return new ListCustomers();
                 } else if (cmd.equals("help")) {
-                    return new Help();
+                    return new Help(role);
                 }
             }
 

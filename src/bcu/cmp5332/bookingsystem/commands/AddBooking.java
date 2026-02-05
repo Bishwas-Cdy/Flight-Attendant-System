@@ -6,8 +6,10 @@ import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
+import java.time.temporal.ChronoUnit;
+
 /**
- * Adds a booking for a customer on a flight.
+ * Adds a booking for a customer on a flight with dynamic pricing.
  */
 public class AddBooking implements Command {
 
@@ -34,14 +36,37 @@ public class AddBooking implements Command {
                     "Cannot add booking. Flight is full (" + capacity + " seats).");
         }
 
-        // Store price at booking time (for now: base price)
-        double priceAtBooking = flight.getBasePrice();
+        // --- Dynamic pricing ---
+        double price = flight.getBasePrice();
 
-        Booking booking = new Booking(customer, flight, fbs.getSystemDate(), priceAtBooking);
+        // Seat-based pricing
+        if (capacity > 0) {
+            double occupancyRate = (double) currentPassengers / capacity;
+
+            if (occupancyRate >= 0.8) {
+                price = price * 1.20; // +20%
+            } else if (occupancyRate >= 0.5) {
+                price = price * 1.10; // +10%
+            }
+        }
+
+        // Date-based pricing
+        long daysToDeparture = ChronoUnit.DAYS.between(
+                fbs.getSystemDate(), flight.getDepartureDate());
+
+        if (daysToDeparture <= 7) {
+            price = price * 1.30; // +30%
+        } else if (daysToDeparture <= 30) {
+            price = price * 1.15; // +15%
+        }
+
+        // Create booking with calculated price
+        Booking booking = new Booking(customer, flight, fbs.getSystemDate(), price);
 
         customer.addBooking(booking);
         flight.addPassenger(customer);
 
-        System.out.println("Booking added successfully. Price: " + String.format("%.2f", priceAtBooking));
+        System.out.println("Booking added successfully.");
+        System.out.println("Final price: " + String.format("%.2f", price));
     }
 }

@@ -251,7 +251,7 @@ public class Main {
                     }
                 }
 
-                Command command = CommandParser.parse(trimmed);
+                Command command = CommandParser.parse(trimmed, currentUser.getRole());
                 command.execute(fbs);
 
                 FlightBookingSystemData.store(fbs);
