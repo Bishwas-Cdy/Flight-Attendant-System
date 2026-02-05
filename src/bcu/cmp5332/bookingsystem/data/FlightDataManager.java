@@ -20,7 +20,7 @@ public class FlightDataManager implements DataManager {
     
     /**
      * Loads flight data from file. Supports backward compatibility with old format.
-     * Format: id::flightNumber::origin::destination::departureDate::capacity::basePrice::
+     * Format: id::flightNumber::origin::destination::departureDate::capacity::basePrice::active::
      * 
      * @param fbs the flight booking system to populate
      * @throws IOException if file read fails
@@ -62,6 +62,17 @@ public class FlightDataManager implements DataManager {
                     
                     Flight flight = new Flight(id, flightNumber, origin, destination, 
                                                departureDate, capacity, basePrice);
+                    
+                    // Handle active flag (backward compatible - default to true if missing)
+                    boolean active = true;
+                    if (properties.length > 7 && !properties[7].isEmpty()) {
+                        active = Boolean.parseBoolean(properties[7]);
+                    }
+                    
+                    if (!active) {
+                        flight.deactivate();
+                    }
+                    
                     fbs.addFlight(flight);
                 } catch (NumberFormatException ex) {
                     throw new FlightBookingSystemException("Unable to parse flight id " + properties[0] 
@@ -73,8 +84,8 @@ public class FlightDataManager implements DataManager {
     }
     
     /**
-     * Stores flight data to file in new format including capacity and basePrice.
-     * Format: id::flightNumber::origin::destination::departureDate::capacity::basePrice::
+     * Stores flight data to file in new format including capacity, basePrice, and active flag.
+     * Format: id::flightNumber::origin::destination::departureDate::capacity::basePrice::active::
      * 
      * @param fbs the flight booking system containing flights to store
      * @throws IOException if file write fails
@@ -90,6 +101,7 @@ public class FlightDataManager implements DataManager {
                 out.print(flight.getDepartureDate() + SEPARATOR);
                 out.print(flight.getCapacity() + SEPARATOR);
                 out.print(flight.getBasePrice() + SEPARATOR);
+                out.print(flight.isActive() + SEPARATOR);
                 out.println();
             }
         }

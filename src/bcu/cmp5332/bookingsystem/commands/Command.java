@@ -19,6 +19,7 @@ public interface Command {
             + "\tdeactivatecustomer [customer id]          deactivate a customer account\n"
             + "\treactivatecustomer [customer id]          reactivate a customer account\n"
             + "\tdeactivateflight [flight id]              deactivate a flight\n"
+            + "\treactivateflight [flight id]              reactivate a flight\n"
             + "\tloadgui                                   loads the GUI version of the app\n"
             + "\thelp                                      prints this help message\n"
             + "\texit                                      exits the program";

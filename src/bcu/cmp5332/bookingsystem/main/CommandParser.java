@@ -16,6 +16,7 @@ import bcu.cmp5332.bookingsystem.commands.ListCustomers;
 import bcu.cmp5332.bookingsystem.commands.ListFlights;
 import bcu.cmp5332.bookingsystem.commands.LoadGUI;
 import bcu.cmp5332.bookingsystem.commands.ReactivateCustomer;
+import bcu.cmp5332.bookingsystem.commands.ReactivateFlight;
 import bcu.cmp5332.bookingsystem.commands.ShowCustomer;
 import bcu.cmp5332.bookingsystem.commands.ShowFlight;
 import bcu.cmp5332.bookingsystem.commands.UpdateBooking;
@@ -119,6 +120,8 @@ public class CommandParser {
                     return new ReactivateCustomer(id, user);
                 } else if (cmd.equals("deactivateflight")) {
                     return new DeactivateFlight(id, user);
+                } else if (cmd.equals("reactivateflight")) {
+                    return new ReactivateFlight(id, user);
                 }
             }
 

@@ -36,6 +36,17 @@ public class CustomerDataManager implements DataManager {
                     String phone = properties[2];
 
                     Customer customer = new Customer(id, name, phone);
+                    
+                    // Handle active flag (backward compatible - default to true if missing)
+                    boolean active = true;
+                    if (properties.length > 3 && !properties[3].isEmpty()) {
+                        active = Boolean.parseBoolean(properties[3]);
+                    }
+                    
+                    if (!active) {
+                        customer.deactivate();
+                    }
+                    
                     fbs.addCustomer(customer);
 
                 } catch (NumberFormatException ex) {
@@ -59,6 +70,7 @@ public class CustomerDataManager implements DataManager {
                 out.print(customer.getId() + SEPARATOR);
                 out.print(customer.getName() + SEPARATOR);
                 out.print(customer.getPhone() + SEPARATOR);
+                out.print(customer.isActive() + SEPARATOR);
                 out.println();
             }
         }
