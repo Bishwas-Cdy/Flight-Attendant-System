@@ -20,8 +20,19 @@ import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Parses user commands and creates corresponding Command objects.
+ */
 public class CommandParser {
 
+    /**
+     * Parses a command line and returns the appropriate Command object.
+     *
+     * @param line the command line input
+     * @return a Command object
+     * @throws IOException if input reading fails
+     * @throws FlightBookingSystemException if command is invalid
+     */
     public static Command parse(String line) throws IOException, FlightBookingSystemException {
         line = line.trim();
 
@@ -47,7 +58,10 @@ public class CommandParser {
 
                 LocalDate departureDate = parseDateWithAttempts(reader);
 
-                return new AddFlight(flightNumber, origin, destination, departureDate);
+                int capacity = readIntWithRetry(reader, "Capacity (seats): ", 0);
+                double basePrice = readDoubleWithRetry(reader, "Base Price ($): ", 0);
+
+                return new AddFlight(flightNumber, origin, destination, departureDate, capacity, basePrice);
             }
 
             if (cmd.equals("addcustomer")) {
@@ -95,7 +109,6 @@ public class CommandParser {
                 } else if (cmd.equals("cancelbooking")) {
                     return new CancelBooking(id1, id2);
                 } else if (cmd.equals("editbooking") || cmd.equals("updatebooking")) {
-                    // Two-id version from brief: update the customer's most recent booking
                     return new EditBooking(id1, id2);
                 }
             }
@@ -106,7 +119,6 @@ public class CommandParser {
                 int newFlightId = Integer.parseInt(parts[3]);
 
                 if (cmd.equals("updatebooking") || cmd.equals("editbooking")) {
-                    // More explicit version: update from old flight to new flight
                     return new UpdateBooking(customerId, oldFlightId, newFlightId);
                 }
             }
@@ -118,6 +130,67 @@ public class CommandParser {
         throw new FlightBookingSystemException("Invalid command.");
     }
 
+    /**
+     * Reads an integer from user input with retry logic.
+     * Keeps prompting until a valid integer >= minValue is entered.
+     *
+     * @param br BufferedReader for input
+     * @param prompt the prompt to display to user
+     * @param minValue the minimum acceptable value (inclusive)
+     * @return the validated integer input
+     * @throws IOException if input reading fails
+     */
+    public static int readIntWithRetry(BufferedReader br, String prompt, int minValue) throws IOException {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int value = Integer.parseInt(br.readLine());
+                if (value < minValue) {
+                    System.out.println("Value must be at least " + minValue + ". Please try again.");
+                    continue;
+                }
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid integer.");
+            }
+        }
+    }
+
+    /**
+     * Reads a double from user input with retry logic.
+     * Keeps prompting until a valid double >= minValue is entered.
+     *
+     * @param br BufferedReader for input
+     * @param prompt the prompt to display to user
+     * @param minValue the minimum acceptable value (inclusive)
+     * @return the validated double input
+     * @throws IOException if input reading fails
+     */
+    public static double readDoubleWithRetry(BufferedReader br, String prompt, double minValue) throws IOException {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                double value = Double.parseDouble(br.readLine());
+                if (value < minValue) {
+                    System.out.println("Value must be at least " + minValue + ". Please try again.");
+                    continue;
+                }
+                return value;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
+
+    /**
+     * Parses departure date from user input with retry logic.
+     *
+     * @param br BufferedReader for input
+     * @param attempts number of retry attempts allowed
+     * @return the parsed LocalDate
+     * @throws IOException if input reading fails
+     * @throws FlightBookingSystemException if date parsing fails after all attempts
+     */
     private static LocalDate parseDateWithAttempts(BufferedReader br, int attempts)
             throws IOException, FlightBookingSystemException {
         if (attempts < 1) {
@@ -137,8 +210,17 @@ public class CommandParser {
         throw new FlightBookingSystemException("Incorrect departure date provided. Cannot create flight.");
     }
 
+    /**
+     * Parses departure date with default 3 retry attempts.
+     *
+     * @param br BufferedReader for input
+     * @return the parsed LocalDate
+     * @throws IOException if input reading fails
+     * @throws FlightBookingSystemException if date parsing fails
+     */
     private static LocalDate parseDateWithAttempts(BufferedReader br)
             throws IOException, FlightBookingSystemException {
         return parseDateWithAttempts(br, 3);
     }
 }
+

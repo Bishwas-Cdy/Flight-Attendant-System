@@ -6,12 +6,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
- * Represents a flight in the Flight Booking System.
- * Each flight holds a unique set of passengers (customers).
+ * Represents a flight in the flight booking system.
  */
 public class Flight {
 
@@ -21,23 +19,64 @@ public class Flight {
     private String destination;
     private LocalDate departureDate;
 
-    private final Set<Customer> passengers;
+    // New fields
+    private int capacity;
+    private double basePrice;
 
-    public Flight(int id, String flightNumber, String origin, String destination, LocalDate departureDate) {
+    private Set<Customer> passengers = new HashSet<>();
+
+    /**
+     * Constructor with capacity and base price.
+     *
+     * @param id flight id
+     * @param flightNumber flight number
+     * @param origin origin
+     * @param destination destination
+     * @param departureDate departure date
+     * @param capacity total seats available
+     * @param basePrice base price for booking
+     */
+    public Flight(int id, String flightNumber, String origin, String destination,
+                  LocalDate departureDate, int capacity, double basePrice) {
+
+        if (flightNumber == null || flightNumber.isBlank()) {
+            throw new IllegalArgumentException("Flight number cannot be empty.");
+        }
+        if (origin == null || origin.isBlank()) {
+            throw new IllegalArgumentException("Origin cannot be empty.");
+        }
+        if (destination == null || destination.isBlank()) {
+            throw new IllegalArgumentException("Destination cannot be empty.");
+        }
+        if (departureDate == null) {
+            throw new IllegalArgumentException("Departure date cannot be null.");
+        }
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Capacity cannot be negative.");
+        }
+        if (basePrice < 0) {
+            throw new IllegalArgumentException("Base price cannot be negative.");
+        }
+
         this.id = id;
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.departureDate = departureDate;
-        passengers = new HashSet<>();
+        this.capacity = capacity;
+        this.basePrice = basePrice;
+    }
+
+    /**
+     * Backwards-compatible constructor (if older code still calls it).
+     */
+    public Flight(int id, String flightNumber, String origin, String destination,
+                  LocalDate departureDate) {
+        this(id, flightNumber, origin, destination, departureDate, 0, 0.0);
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getFlightNumber() {
@@ -45,6 +84,9 @@ public class Flight {
     }
 
     public void setFlightNumber(String flightNumber) {
+        if (flightNumber == null || flightNumber.isBlank()) {
+            throw new IllegalArgumentException("Flight number cannot be empty.");
+        }
         this.flightNumber = flightNumber;
     }
 
@@ -53,6 +95,9 @@ public class Flight {
     }
 
     public void setOrigin(String origin) {
+        if (origin == null || origin.isBlank()) {
+            throw new IllegalArgumentException("Origin cannot be empty.");
+        }
         this.origin = origin;
     }
 
@@ -61,6 +106,9 @@ public class Flight {
     }
 
     public void setDestination(String destination) {
+        if (destination == null || destination.isBlank()) {
+            throw new IllegalArgumentException("Destination cannot be empty.");
+        }
         this.destination = destination;
     }
 
@@ -69,38 +117,76 @@ public class Flight {
     }
 
     public void setDepartureDate(LocalDate departureDate) {
+        if (departureDate == null) {
+            throw new IllegalArgumentException("Departure date cannot be null.");
+        }
         this.departureDate = departureDate;
     }
 
     /**
-     * Returns a copy of passengers as a list.
-     *
-     * @return passengers list
+     * Returns the capacity (total seats) of the flight.
      */
-    public List<Customer> getPassengers() {
+    public int getCapacity() {
+        return capacity;
+    }
+
+    /**
+     * Sets the capacity (total seats) of the flight.
+     *
+     * @param capacity number of seats (must be 0 or more)
+     */
+    public void setCapacity(int capacity) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Capacity cannot be negative.");
+        }
+        this.capacity = capacity;
+    }
+
+    /**
+     * Returns the base price of the flight.
+     */
+    public double getBasePrice() {
+        return basePrice;
+    }
+
+    /**
+     * Sets the base price of the flight.
+     *
+     * @param basePrice base price (must be 0 or more)
+     */
+    public void setBasePrice(double basePrice) {
+        if (basePrice < 0) {
+            throw new IllegalArgumentException("Base price cannot be negative.");
+        }
+        this.basePrice = basePrice;
+    }
+
+    /**
+     * Returns current passengers as a list copy.
+     */
+    public ArrayList<Customer> getPassengers() {
         return new ArrayList<>(passengers);
     }
 
     public String getDetailsShort() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return "Flight #" + id + " - " + flightNumber + " - " + origin + " to "
-                + destination + " on " + departureDate.format(dtf);
+                + destination + " on " + departureDate.format(dtf)
+                + " | Seats: " + capacity
+                + " | Base Price: " + String.format("%.2f", basePrice);
     }
 
-    /**
-     * Returns detailed flight information including passenger list.
-     *
-     * @return long details string
-     */
     public String getDetailsLong() {
+        StringBuilder sb = new StringBuilder();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        StringBuilder sb = new StringBuilder();
         sb.append("Flight #").append(id).append("\n");
         sb.append("Flight No: ").append(flightNumber).append("\n");
         sb.append("Origin: ").append(origin).append("\n");
         sb.append("Destination: ").append(destination).append("\n");
         sb.append("Departure Date: ").append(departureDate.format(dtf)).append("\n");
+        sb.append("Capacity: ").append(capacity).append("\n");
+        sb.append("Base Price: ").append(String.format("%.2f", basePrice)).append("\n");
         sb.append("---------------------------\n");
         sb.append("Passengers:\n");
 

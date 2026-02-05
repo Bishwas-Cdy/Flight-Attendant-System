@@ -25,6 +25,8 @@ public class AddFlightWindow extends JFrame implements ActionListener {
     private JTextField originText = new JTextField();
     private JTextField destinationText = new JTextField();
     private JTextField depDateText = new JTextField();
+    private JTextField capacityText = new JTextField();
+    private JTextField basePriceText = new JTextField();
 
     private JButton addBtn = new JButton("Add");
     private JButton cancelBtn = new JButton("Cancel");
@@ -47,9 +49,9 @@ public class AddFlightWindow extends JFrame implements ActionListener {
 
         setTitle("Add a New Flight");
 
-        setSize(350, 220);
+        setSize(350, 280);
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(5, 2));
+        topPanel.setLayout(new GridLayout(6, 2));
         topPanel.add(new JLabel("Flight No : "));
         topPanel.add(flightNoText);
         topPanel.add(new JLabel("Origin : "));
@@ -58,6 +60,10 @@ public class AddFlightWindow extends JFrame implements ActionListener {
         topPanel.add(destinationText);
         topPanel.add(new JLabel("Departure Date (YYYY-MM-DD) : "));
         topPanel.add(depDateText);
+        topPanel.add(new JLabel("Capacity (seats) : "));
+        topPanel.add(capacityText);
+        topPanel.add(new JLabel("Base Price ($) : "));
+        topPanel.add(basePriceText);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(1, 3));
@@ -96,10 +102,31 @@ public class AddFlightWindow extends JFrame implements ActionListener {
                 departureDate = LocalDate.parse(depDateText.getText());
             }
             catch (DateTimeParseException dtpe) {
-                throw new FlightBookingSystemException("Date must be in YYYY-DD-MM format");
+                throw new FlightBookingSystemException("Date must be in YYYY-MM-DD format");
             }
+            
+            int capacity;
+            try {
+                capacity = Integer.parseInt(capacityText.getText());
+                if (capacity < 0) {
+                    throw new FlightBookingSystemException("Capacity must be non-negative");
+                }
+            } catch (NumberFormatException e) {
+                throw new FlightBookingSystemException("Capacity must be a valid integer");
+            }
+            
+            double basePrice;
+            try {
+                basePrice = Double.parseDouble(basePriceText.getText());
+                if (basePrice < 0) {
+                    throw new FlightBookingSystemException("Base price must be non-negative");
+                }
+            } catch (NumberFormatException e) {
+                throw new FlightBookingSystemException("Base price must be a valid number");
+            }
+            
             // create and execute the AddFlight Command
-            Command addFlight = new AddFlight(flightNumber, origin, destination, departureDate);
+            Command addFlight = new AddFlight(flightNumber, origin, destination, departureDate, capacity, basePrice);
             addFlight.execute(mw.getFlightBookingSystem());
             // refresh the view with the list of flights
             mw.displayFlights();

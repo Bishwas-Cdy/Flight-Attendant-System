@@ -8,7 +8,7 @@ public interface Command {
     public static final String HELP_MESSAGE = "Commands:\n"
             + "\tlistflights                               print all flights\n"
             + "\tlistcustomers                             print all customers\n"
-            + "\taddflight                                 add a new flight\n"
+            + "\taddflight                                 add a new flight (includes capacity and base price)\n"
             + "\taddcustomer                               add a new customer\n"
             + "\tshowflight [flight id]                    show flight details\n"
             + "\tshowcustomer [customer id]                show customer details\n"
