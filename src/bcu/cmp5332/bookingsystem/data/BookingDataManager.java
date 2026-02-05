@@ -20,7 +20,12 @@ public class BookingDataManager implements DataManager {
     @Override
     public void loadData(FlightBookingSystem fbs) throws IOException, FlightBookingSystemException {
 
-        try (Scanner sc = new Scanner(new File(RESOURCE))) {
+        File file = new File(RESOURCE);
+        if (!file.exists()) {
+            return;
+        }
+
+        try (Scanner sc = new Scanner(file)) {
             int lineIdx = 1;
 
             while (sc.hasNextLine()) {
@@ -31,28 +36,33 @@ public class BookingDataManager implements DataManager {
                     continue;
                 }
 
-                String[] properties = line.split(SEPARATOR, -1);
+                String[] parts = line.split(SEPARATOR, -1);
 
                 try {
-                    int customerId = Integer.parseInt(properties[0]);
-                    int flightId = Integer.parseInt(properties[1]);
-                    LocalDate bookingDate = LocalDate.parse(properties[2]);
+                    int customerId = Integer.parseInt(parts[0]);
+                    int flightId = Integer.parseInt(parts[1]);
+                    LocalDate bookingDate = LocalDate.parse(parts[2]);
 
                     Customer customer = fbs.getCustomerByID(customerId);
                     Flight flight = fbs.getFlightByID(flightId);
 
-                    Booking booking = new Booking(customer, flight, bookingDate);
+                    double bookingPrice;
 
+                    // New format has price in parts[3]
+                    if (parts.length > 3 && parts[3] != null && !parts[3].trim().isEmpty()) {
+                        bookingPrice = Double.parseDouble(parts[3].trim());
+                    } else {
+                        // Old format: no price stored, so use flight base price
+                        bookingPrice = flight.getBasePrice();
+                    }
+
+                    Booking booking = new Booking(customer, flight, bookingDate, bookingPrice);
+
+                    // Rebuild relationships
                     customer.addBooking(booking);
                     flight.addPassenger(customer);
 
-                } catch (NumberFormatException ex) {
-                    throw new FlightBookingSystemException(
-                            "Unable to parse booking ids on line " + lineIdx + "\nError: " + ex);
-                } catch (FlightBookingSystemException ex) {
-                    throw new FlightBookingSystemException(
-                            "Invalid booking data on line " + lineIdx + "\nError: " + ex.getMessage());
-                } catch (IllegalArgumentException ex) {
+                } catch (Exception ex) {
                     throw new FlightBookingSystemException(
                             "Invalid booking data on line " + lineIdx + "\nError: " + ex.getMessage());
                 }
@@ -66,12 +76,12 @@ public class BookingDataManager implements DataManager {
     public void storeData(FlightBookingSystem fbs) throws IOException {
 
         try (PrintWriter out = new PrintWriter(new FileWriter(RESOURCE))) {
-
             for (Customer customer : fbs.getCustomers()) {
                 for (Booking booking : customer.getBookings()) {
                     out.print(customer.getId() + SEPARATOR);
                     out.print(booking.getFlight().getId() + SEPARATOR);
                     out.print(booking.getBookingDate() + SEPARATOR);
+                    out.print(booking.getBookingPrice() + SEPARATOR);
                     out.println();
                 }
             }

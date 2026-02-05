@@ -65,7 +65,9 @@ public class Customer {
             Flight f = b.getFlight();
             sb.append("* Booking date: ")
                     .append(b.getBookingDate().format(dtf))
-                    .append(" for Flight #").append(f.getId())
+                    .append(" | Price: ")
+                    .append(String.format("%.2f", b.getBookingPrice()))
+                    .append(" | Flight #").append(f.getId())
                     .append(" - ").append(f.getFlightNumber())
                     .append(" - ").append(f.getOrigin()).append(" to ").append(f.getDestination())
                     .append(" on ").append(f.getDepartureDate().format(dtf))

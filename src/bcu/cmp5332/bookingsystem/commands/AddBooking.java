@@ -29,19 +29,19 @@ public class AddBooking implements Command {
         int capacity = flight.getCapacity();
         int currentPassengers = flight.getPassengers().size();
 
-        // If capacity is set (> 0) and flight is full, block booking
         if (capacity > 0 && currentPassengers >= capacity) {
             throw new FlightBookingSystemException(
                     "Cannot add booking. Flight is full (" + capacity + " seats).");
         }
 
-        // Create booking
-        Booking booking = new Booking(customer, flight, fbs.getSystemDate());
+        // Store price at booking time (for now: base price)
+        double priceAtBooking = flight.getBasePrice();
 
-        // Update relationships
+        Booking booking = new Booking(customer, flight, fbs.getSystemDate(), priceAtBooking);
+
         customer.addBooking(booking);
         flight.addPassenger(customer);
 
-        System.out.println("Booking added successfully.");
+        System.out.println("Booking added successfully. Price: " + String.format("%.2f", priceAtBooking));
     }
 }
