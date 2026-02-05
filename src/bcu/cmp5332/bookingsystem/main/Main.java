@@ -6,6 +6,7 @@ import bcu.cmp5332.bookingsystem.auth.User;
 import bcu.cmp5332.bookingsystem.auth.UserDataManager;
 import bcu.cmp5332.bookingsystem.commands.Command;
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
+import bcu.cmp5332.bookingsystem.gui.GuiAuthMenu;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
@@ -33,7 +34,8 @@ public class Main {
                 System.out.println();
                 System.out.println("1. Login");
                 System.out.println("2. Register (Customer)");
-                System.out.println("3. Exit");
+                System.out.println("3. Load GUI");
+                System.out.println("4. Exit");
                 System.out.print("Select option: ");
 
                 String choice = br.readLine();
@@ -124,6 +126,13 @@ public class Main {
                     }
 
                 } else if ("3".equals(choice)) {
+                    // Load GUI
+                    javax.swing.SwingUtilities.invokeLater(() ->
+                            new GuiAuthMenu(fbs)
+                    );
+                    return;
+
+                } else if ("4".equals(choice)) {
                     FlightBookingSystemData.store(fbs);
                     System.exit(0);
                 } else {

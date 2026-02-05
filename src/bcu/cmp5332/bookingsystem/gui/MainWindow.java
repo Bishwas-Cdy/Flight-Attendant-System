@@ -154,7 +154,7 @@ public class MainWindow extends JFrame implements ActionListener {
             displayFlights();
             
         } else if (ae.getSource() == flightsAdd) {
-            new AddFlightWindow(this);
+            new AddFlightWindow(this, fbs, this::displayFlights);
             
         } else if (ae.getSource() == flightsDel) {
             
