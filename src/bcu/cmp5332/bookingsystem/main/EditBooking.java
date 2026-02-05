@@ -3,15 +3,11 @@ package bcu.cmp5332.bookingsystem.commands;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
 import bcu.cmp5332.bookingsystem.model.Customer;
-import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
-import java.util.List;
-
 /**
- * Updates a customer's most recent booking to a new flight.
- * This supports the two-id command format:
- * updatebooking [customer id] [new flight id]
+ * Short version of updatebooking.
+ * Edits (updates) the most recent booking to a new flight.
  */
 public class EditBooking implements Command {
 
@@ -24,29 +20,20 @@ public class EditBooking implements Command {
     }
 
     @Override
-    public void execute(FlightBookingSystem flightBookingSystem) throws FlightBookingSystemException {
+    public void execute(FlightBookingSystem fbs) throws FlightBookingSystemException {
 
-        Customer customer = flightBookingSystem.getCustomerByID(customerId);
-        Flight newFlight = flightBookingSystem.getFlightByID(newFlightId);
+        Customer customer = fbs.getCustomerByID(customerId);
 
-        List<Booking> bookings = customer.getBookings();
-        if (bookings.isEmpty()) {
+        if (customer.getBookings().isEmpty()) {
             throw new FlightBookingSystemException("Customer has no bookings to update.");
         }
 
-        // Update the most recent booking (last one in the list)
-        Booking oldBooking = bookings.get(bookings.size() - 1);
-        Flight oldFlight = oldBooking.getFlight();
+        // Most recent booking = last in the list (simple assumption)
+        Booking lastBooking = customer.getBookings().get(customer.getBookings().size() - 1);
+        int oldFlightId = lastBooking.getFlight().getId();
 
-        // Remove old booking link
-        customer.cancelBookingForFlight(oldFlight);
-        oldFlight.removePassenger(customer);
-
-        // Create new booking
-        Booking newBooking = new Booking(customer, newFlight, flightBookingSystem.getSystemDate());
-        customer.addBooking(newBooking);
-        newFlight.addPassenger(customer);
-
-        System.out.println("Booking updated successfully.");
+        // Reuse the full UpdateBooking logic by creating the command and executing it
+        UpdateBooking updater = new UpdateBooking(customerId, oldFlightId, newFlightId);
+        updater.execute(fbs);
     }
 }

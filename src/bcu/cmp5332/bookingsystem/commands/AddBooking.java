@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 
 /**
  * Adds a booking for a customer on a flight with dynamic pricing.
+ * Booking is not allowed for past flights.
  */
 public class AddBooking implements Command {
 
@@ -26,6 +27,11 @@ public class AddBooking implements Command {
 
         Customer customer = fbs.getCustomerByID(customerId);
         Flight flight = fbs.getFlightByID(flightId);
+
+        // Past-flight restriction
+        if (flight.getDepartureDate().isBefore(fbs.getSystemDate())) {
+            throw new FlightBookingSystemException("Cannot add booking. Flight has already departed.");
+        }
 
         // Capacity enforcement
         int capacity = flight.getCapacity();

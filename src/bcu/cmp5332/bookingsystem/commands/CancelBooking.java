@@ -1,12 +1,13 @@
 package bcu.cmp5332.bookingsystem.commands;
 
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.Booking;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 /**
- * Command to cancel a booking.
+ * Cancels a booking and applies a cancellation fee.
  */
 public class CancelBooking implements Command {
 
@@ -19,15 +20,42 @@ public class CancelBooking implements Command {
     }
 
     @Override
-    public void execute(FlightBookingSystem flightBookingSystem)
-            throws FlightBookingSystemException {
+    public void execute(FlightBookingSystem fbs) throws FlightBookingSystemException {
 
-        Customer customer = flightBookingSystem.getCustomerByID(customerId);
-        Flight flight = flightBookingSystem.getFlightByID(flightId);
+        Customer customer = fbs.getCustomerByID(customerId);
+        Flight flight = fbs.getFlightByID(flightId);
 
+        Booking booking = findBooking(customer, flightId);
+        if (booking == null) {
+            throw new FlightBookingSystemException("Booking not found for this customer and flight.");
+        }
+
+        double bookingPrice = booking.getBookingPrice();
+        double fee = bookingPrice * 0.10; // 10%
+        if (fee < 5.0) {
+            fee = 5.0;
+        }
+
+        double refund = bookingPrice - fee;
+        if (refund < 0) {
+            refund = 0;
+        }
+
+        // Remove booking from customer and passenger from flight
         customer.cancelBookingForFlight(flight);
         flight.removePassenger(customer);
 
         System.out.println("Booking cancelled successfully.");
+        System.out.println("Cancellation fee: " + String.format("%.2f", fee));
+        System.out.println("Refund amount: " + String.format("%.2f", refund));
+    }
+
+    private Booking findBooking(Customer customer, int flightId) {
+        for (Booking b : customer.getBookings()) {
+            if (b.getFlight().getId() == flightId) {
+                return b;
+            }
+        }
+        return null;
     }
 }
