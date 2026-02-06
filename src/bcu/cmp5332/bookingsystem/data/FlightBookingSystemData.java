@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Factory and coordinator for all data persistence operations.
+ * Manages loading and saving of flights, customers, bookings, and users.
+ */
 public class FlightBookingSystemData {
 
     private static final List<DataManager> dataManagers = new ArrayList<>();
@@ -20,6 +24,13 @@ public class FlightBookingSystemData {
         dataManagers.add(new BookingDataManager());
     }
 
+    /**
+     * Loads all data from files into a new FlightBookingSystem.
+     *
+     * @return a FlightBookingSystem populated with data from files
+     * @throws FlightBookingSystemException if data format is invalid
+     * @throws IOException if file reading fails
+     */
     public static FlightBookingSystem load() throws FlightBookingSystemException, IOException {
 
         FlightBookingSystem fbs = new FlightBookingSystem();
@@ -34,6 +45,12 @@ public class FlightBookingSystemData {
         return fbs;
     }
 
+    /**
+     * Saves all data from the FlightBookingSystem to files.
+     *
+     * @param fbs the FlightBookingSystem to save
+     * @throws IOException if file writing fails
+     */
     public static void store(FlightBookingSystem fbs) throws IOException {
 
         for (DataManager dm : dataManagers) {
@@ -44,6 +61,11 @@ public class FlightBookingSystemData {
         userDataManager.storeData(null);
     }
 
+    /**
+     * Returns the UserDataManager for user account operations.
+     *
+     * @return the UserDataManager instance
+     */
     public static UserDataManager getUserDataManager() {
         return userDataManager;
     }

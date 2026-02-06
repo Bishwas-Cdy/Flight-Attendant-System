@@ -8,7 +8,7 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * Admin GUI window.
+ * Admin GUI window displaying tabbed interface for managing flights, customers, and bookings.
  */
 public class AdminWindow extends JFrame {
 
@@ -21,6 +21,12 @@ public class AdminWindow extends JFrame {
     private final CustomersPanel customersPanel;
     private final BookingsPanel bookingsPanel;
 
+    /**
+     * Creates a new admin window.
+     *
+     * @param fbs the FlightBookingSystem instance
+     * @param session the authenticated admin session
+     */
     public AdminWindow(FlightBookingSystem fbs, GuiSession session) {
         this.fbs = fbs;
         this.session = session;
@@ -32,6 +38,9 @@ public class AdminWindow extends JFrame {
         initialize();
     }
 
+    /**
+     * Initializes GUI components and layout.
+     */
     private void initialize() {
         setTitle("Admin - Flight Booking System");
         setSize(900, 550);

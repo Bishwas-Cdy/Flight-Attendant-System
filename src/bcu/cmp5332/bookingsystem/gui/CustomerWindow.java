@@ -8,7 +8,7 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * Customer GUI window. Limited features and customerId locked from session.
+ * Customer GUI window with limited features. Restricts access to own bookings and flights.
  */
 public class CustomerWindow extends JFrame {
 
@@ -21,6 +21,12 @@ public class CustomerWindow extends JFrame {
     private final BookingsPanel bookingsPanel;
     private final MyDetailsPanel myDetailsPanel;
 
+    /**
+     * Creates a new customer window.
+     *
+     * @param fbs the FlightBookingSystem instance
+     * @param session the authenticated customer session
+     */
     public CustomerWindow(FlightBookingSystem fbs, GuiSession session) {
         this.fbs = fbs;
         this.session = session;
@@ -32,6 +38,9 @@ public class CustomerWindow extends JFrame {
         initialize();
     }
 
+    /**
+     * Initializes GUI components and layout.
+     */
     private void initialize() {
         setTitle("Customer - Flight Booking System");
         setSize(900, 550);

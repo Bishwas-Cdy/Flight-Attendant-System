@@ -13,10 +13,21 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.Scanner;
 
+/**
+ * Manages persistence of booking records to and from a file.
+ * Loads and saves bookings from ./resources/data/bookings.txt.
+ */
 public class BookingDataManager implements DataManager {
 
     public final String RESOURCE = "./resources/data/bookings.txt";
 
+    /**
+     * Loads bookings from the bookings.txt file and adds them to the system.
+     *
+     * @param fbs the FlightBookingSystem to add loaded bookings to
+     * @throws IOException if file reading fails
+     * @throws FlightBookingSystemException if booking data format is invalid
+     */
     @Override
     public void loadData(FlightBookingSystem fbs) throws IOException, FlightBookingSystemException {
 
@@ -72,6 +83,12 @@ public class BookingDataManager implements DataManager {
         }
     }
 
+    /**
+     * Saves all bookings from the system to the bookings.txt file.
+     *
+     * @param fbs the FlightBookingSystem containing bookings to save
+     * @throws IOException if file writing fails
+     */
     @Override
     public void storeData(FlightBookingSystem fbs) throws IOException {
 

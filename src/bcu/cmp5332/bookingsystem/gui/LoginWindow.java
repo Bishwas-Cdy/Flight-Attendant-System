@@ -9,7 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * GUI login screen. Opens AdminWindow or CustomerWindow.
+ * GUI login screen for user authentication.
+ * Displays email and password input fields and authenticates users.
+ * Opens AdminWindow for admin users or CustomerWindow for customer users.
  */
 public class LoginWindow extends JFrame {
 
@@ -21,11 +23,19 @@ public class LoginWindow extends JFrame {
     private final JButton loginBtn = new JButton("Login");
     private final JButton exitBtn = new JButton("Exit");
 
+    /**
+     * Creates a new login window.
+     *
+     * @param fbs the FlightBookingSystem instance
+     */
     public LoginWindow(FlightBookingSystem fbs) {
         this.fbs = fbs;
         initialize();
     }
 
+    /**
+     * Initializes the GUI components and layout.
+     */
     private void initialize() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -61,6 +71,10 @@ public class LoginWindow extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Handles login button click event.
+     * Authenticates user credentials and opens appropriate window (Admin or Customer).
+     */
     private void doLogin() {
         String email = emailText.getText();
         String pass = new String(passwordText.getPassword());

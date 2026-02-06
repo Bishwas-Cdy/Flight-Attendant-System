@@ -3,6 +3,10 @@ package bcu.cmp5332.bookingsystem.commands;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
+/**
+ * Interface for executable system commands.
+ * All commands implement this interface and can be executed on a FlightBookingSystem.
+ */
 public interface Command {
 
     public static final String ADMIN_HELP = "Commands:\n"
@@ -35,6 +39,12 @@ public interface Command {
             + "\thelp                                      prints this help message\n"
             + "\texit                                      exits the program";
 
+    /**
+     * Executes this command on the given FlightBookingSystem.
+     *
+     * @param flightBookingSystem the system to execute the command on
+     * @throws FlightBookingSystemException if command execution fails
+     */
     public void execute(FlightBookingSystem flightBookingSystem) throws FlightBookingSystemException;
 
 }

@@ -9,8 +9,8 @@ import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Updates an existing booking from one flight to another and applies a rebooking fee.
- * Rebooking is not allowed to past flights.
+ * Updates an existing booking from one flight to another with dynamic pricing.
+ * Rebooking is not allowed to past flights. Applies a rebooking fee.
  */
 public class UpdateBooking implements Command {
 
@@ -18,12 +18,26 @@ public class UpdateBooking implements Command {
     private final int oldFlightId;
     private final int newFlightId;
 
+    /**
+     * Creates an UpdateBooking command.
+     *
+     * @param customerId the customer's ID
+     * @param oldFlightId the ID of the current flight booking
+     * @param newFlightId the ID of the new flight to rebook to
+     */
     public UpdateBooking(int customerId, int oldFlightId, int newFlightId) {
         this.customerId = customerId;
         this.oldFlightId = oldFlightId;
         this.newFlightId = newFlightId;
     }
 
+    /**
+     * Executes the update booking command.
+     * Cancels old booking, applies rebooking fee, and creates new booking with dynamic pricing.
+     *
+     * @param fbs the flight booking system
+     * @throws FlightBookingSystemException if update cannot be completed
+     */
     @Override
     public void execute(FlightBookingSystem fbs) throws FlightBookingSystemException {
 

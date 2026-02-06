@@ -8,17 +8,31 @@ import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import java.util.List;
 
 /**
- * GUI-side authentication helper.
- * Uses the already-loaded UserDataManager list.
+ * GUI-side authentication service.
+ * Uses the already-loaded UserDataManager for login operations.
  */
 public class GuiAuthService {
 
     private final UserDataManager udm;
 
+    /**
+     * Creates a new GuiAuthService with the user data manager.
+     *
+     * @param udm the UserDataManager containing all system users
+     */
     public GuiAuthService(UserDataManager udm) {
         this.udm = udm;
     }
 
+    /**
+     * Authenticates a user via GUI login.
+     * Creates and returns a GuiSession if credentials are valid.
+     *
+     * @param email the user's email
+     * @param password the user's password
+     * @return a GuiSession for the authenticated user
+     * @throws FlightBookingSystemException if credentials are invalid or validation fails
+     */
     public GuiSession login(String email, String password) throws FlightBookingSystemException {
         if (email == null || email.isBlank()) {
             throw new FlightBookingSystemException("Email cannot be empty.");

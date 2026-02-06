@@ -20,6 +20,11 @@ public class FlightBookingSystem {
     private final Map<Integer, Customer> customers = new TreeMap<>();
     private final Map<Integer, Flight> flights = new TreeMap<>();
 
+    /**
+     * Returns the current system date.
+     *
+     * @return the system date
+     */
     public LocalDate getSystemDate() {
         return systemDate;
     }
@@ -36,6 +41,11 @@ public class FlightBookingSystem {
         this.systemDate = systemDate;
     }
 
+    /**
+     * Returns an unmodifiable list of all flights in the system.
+     *
+     * @return list of flights
+     */
     public List<Flight> getFlights() {
         List<Flight> out = new ArrayList<>(flights.values());
         return Collections.unmodifiableList(out);

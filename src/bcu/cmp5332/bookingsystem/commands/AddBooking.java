@@ -17,11 +17,25 @@ public class AddBooking implements Command {
     private final int customerId;
     private final int flightId;
 
+    /**
+     * Creates an AddBooking command.
+     *
+     * @param customerId the customer's ID
+     * @param flightId the flight's ID
+     */
     public AddBooking(int customerId, int flightId) {
         this.customerId = customerId;
         this.flightId = flightId;
     }
 
+    /**
+     * Executes the add booking command with dynamic pricing.
+     * Enforces business rules: active customer/flight, future flight date, capacity limits.
+     * Calculates price based on seat occupancy and days to departure.
+     *
+     * @param fbs the flight booking system
+     * @throws FlightBookingSystemException if booking cannot be added
+     */
     @Override
     public void execute(FlightBookingSystem fbs) throws FlightBookingSystemException {
 

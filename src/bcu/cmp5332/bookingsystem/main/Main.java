@@ -14,10 +14,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Entry point for the Flight Booking System command-line interface.
+ * Handles user authentication and command execution.
+ */
 public class Main {
 
     private static User currentUser = null;
 
+    /**
+     * Main entry point for the Flight Booking System.
+     * Loads system data, authenticates users, and processes commands.
+     *
+     * @param args command-line arguments (not used)
+     * @throws IOException if file reading/writing fails
+     * @throws FlightBookingSystemException if system operation fails
+     */
     public static void main(String[] args) throws IOException, FlightBookingSystemException {
 
         FlightBookingSystem fbs = FlightBookingSystemData.load();
@@ -26,7 +38,7 @@ public class Main {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        System.out.println("=== Flight Booking System ===");
+        System.out.println("Welcome to Flight Booking System");
 
         while (true) {
             // ===== AUTH MENU (until login or exit) =====

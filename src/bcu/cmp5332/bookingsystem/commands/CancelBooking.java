@@ -8,17 +8,31 @@ import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 /**
  * Cancels a booking and applies a cancellation fee.
+ * Fee is 10% of booking price with a minimum of $5.
  */
 public class CancelBooking implements Command {
 
     private final int customerId;
     private final int flightId;
 
+    /**
+     * Creates a CancelBooking command.
+     *
+     * @param customerId the customer's ID
+     * @param flightId the flight's ID
+     */
     public CancelBooking(int customerId, int flightId) {
         this.customerId = customerId;
         this.flightId = flightId;
     }
 
+    /**
+     * Executes the cancel booking command.
+     * Cancels the booking and calculates refund amount after fee deduction.
+     *
+     * @param fbs the flight booking system
+     * @throws FlightBookingSystemException if booking not found or cancellation fails
+     */
     @Override
     public void execute(FlightBookingSystem fbs) throws FlightBookingSystemException {
 

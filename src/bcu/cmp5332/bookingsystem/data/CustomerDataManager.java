@@ -10,10 +10,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
+/**
+ * Manages persistence of customer records to and from a file.
+ * Loads and saves customers from ./resources/data/customers.txt.
+ */
 public class CustomerDataManager implements DataManager {
 
     private final String RESOURCE = "./resources/data/customers.txt";
 
+    /**
+     * Loads customers from the customers.txt file and adds them to the system.
+     *
+     * @param fbs the FlightBookingSystem to add loaded customers to
+     * @throws IOException if file reading fails
+     * @throws FlightBookingSystemException if customer data format is invalid
+     */
     @Override
     public void loadData(FlightBookingSystem fbs) throws IOException, FlightBookingSystemException {
 
@@ -62,6 +73,12 @@ public class CustomerDataManager implements DataManager {
         }
     }
 
+    /**
+     * Saves all customers from the system to the customers.txt file.
+     *
+     * @param fbs the FlightBookingSystem containing customers to save
+     * @throws IOException if file writing fails
+     */
     @Override
     public void storeData(FlightBookingSystem fbs) throws IOException {
 

@@ -4,10 +4,16 @@ import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 
 /**
- * Command to list all customers in the system.
+ * Command to list all active customers in the system.
  */
 public class ListCustomers implements Command {
 
+    /**
+     * Executes the list customers command.
+     * Displays all active customers and the total count.
+     *
+     * @param flightBookingSystem the flight booking system
+     */
     @Override
     public void execute(FlightBookingSystem flightBookingSystem) {
         int count = 0;

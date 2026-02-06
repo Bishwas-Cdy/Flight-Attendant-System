@@ -12,15 +12,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Manages persistence of user accounts to and from a file.
+ * Loads and saves users (admins and customers) from ./resources/data/users.txt.
+ */
 public class UserDataManager implements DataManager {
 
     private static final String RESOURCE = "./resources/data/users.txt";
     private final List<User> users = new ArrayList<>();
 
+    /**
+     * Returns the list of all loaded users.
+     *
+     * @return list of User objects
+     */
     public List<User> getUsers() {
         return users;
     }
 
+    /**
+     * Loads users from the users.txt file into memory.
+     *
+     * @param fbs the FlightBookingSystem (not used for user loading)
+     * @throws IOException if file reading fails
+     * @throws FlightBookingSystemException if user data format is invalid
+     */
     @Override
     public void loadData(FlightBookingSystem fbs) throws IOException, FlightBookingSystemException {
 
@@ -70,6 +86,12 @@ public class UserDataManager implements DataManager {
         }
     }
 
+    /**
+     * Saves all users to the users.txt file.
+     *
+     * @param fbs the FlightBookingSystem (not used for user storage)
+     * @throws IOException if file writing fails
+     */
     @Override
     public void storeData(FlightBookingSystem fbs) throws IOException {
 
