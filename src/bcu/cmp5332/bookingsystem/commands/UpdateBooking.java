@@ -2,6 +2,7 @@ package bcu.cmp5332.bookingsystem.commands;
 
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.BookingStatus;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
@@ -76,9 +77,11 @@ public class UpdateBooking implements Command {
             throw new FlightBookingSystemException("Booking not found for this customer and old flight.");
         }
 
-        // Prevent duplicates: customer cannot already have booking for new flight
-        if (findBooking(customer, newFlightId) != null) {
-            throw new FlightBookingSystemException("Customer already has a booking for the new flight.");
+        // Prevent duplicates: customer cannot already have ACTIVE booking for new flight
+        // (allows rebooking after cancellation)
+        Booking existingNewFlightBooking = findBooking(customer, newFlightId);
+        if (existingNewFlightBooking != null && existingNewFlightBooking.getStatus() == BookingStatus.ACTIVE) {
+            throw new FlightBookingSystemException("Customer already has an active booking for the new flight.");
         }
 
         // Capacity enforcement on new flight
@@ -98,24 +101,32 @@ public class UpdateBooking implements Command {
         // Calculate dynamic price for the new flight
         double newDynamicPrice = calculateDynamicPrice(fbs, newFlight);
 
-        // Update booking object
-        booking.setFlight(newFlight);
-        booking.setBookingDate(fbs.getSystemDate());
-        booking.setBookingPrice(newDynamicPrice + rebookFee);
+        // Mark old booking as CANCELED and store rebook fee
+        booking.setStatus(BookingStatus.CANCELED);
+        booking.setFeeLast(rebookFee);
+        booking.setFeeType("REBOOK");
 
-        // Update passenger lists
-        oldFlight.removePassenger(customer);
+        // Create new booking
+        Booking newBooking = new Booking(customer, newFlight, fbs.getSystemDate(), newDynamicPrice + rebookFee);
+        newBooking.setStatus(BookingStatus.ACTIVE);
+        newBooking.setFeeLast(0.0);
+
+        // Add new booking to customer and passenger to new flight
+        customer.addBooking(newBooking);
         newFlight.addPassenger(customer);
+
+        // Remove passenger from old flight
+        oldFlight.removePassenger(customer);
 
         System.out.println("Booking updated successfully.");
         System.out.println("Old booking price: " + String.format("%.2f", oldPrice));
         System.out.println("Rebooking fee (5% of old price, minimum $2): " + String.format("%.2f", rebookFee));
         System.out.println("New flight base price: " + String.format("%.2f", newDynamicPrice));
-        System.out.println("New booking price: " + String.format("%.2f", booking.getBookingPrice()));
+        System.out.println("New booking price: " + String.format("%.2f", newBooking.getBookingPrice()));
 
         // Calculate and show refund/credit if applicable
         double refundAfterFee = oldPrice - rebookFee;
-        double amountToPay = booking.getBookingPrice() - refundAfterFee;
+        double amountToPay = newBooking.getBookingPrice() - refundAfterFee;
 
         if (amountToPay < 0) {
             System.out.println("Credit to your account: " + String.format("%.2f", -amountToPay));
@@ -128,7 +139,7 @@ public class UpdateBooking implements Command {
 
     private Booking findBooking(Customer customer, int flightId) {
         for (Booking b : customer.getBookings()) {
-            if (b.getFlight().getId() == flightId) {
+            if (b.getFlight().getId() == flightId && b.getStatus() == BookingStatus.ACTIVE) {
                 return b;
             }
         }

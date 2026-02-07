@@ -5,6 +5,7 @@ import bcu.cmp5332.bookingsystem.commands.CancelBooking;
 import bcu.cmp5332.bookingsystem.commands.UpdateBooking;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.BookingStatus;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
@@ -162,7 +163,18 @@ public class PricingLogicTest {
         new UpdateBooking(1, 1, 2).execute(fbs);
 
         assertEquals(oldPrice * 0.05, 5.0, 0.0001);
-        assertEquals(2, booking.getFlight().getId());
-        assertEquals(235.0, booking.getBookingPrice(), 0.5);
+        
+        // Old booking should be marked CANCELED and still on flight 1
+        assertEquals(1, booking.getFlight().getId());
+        assertEquals(BookingStatus.CANCELED, booking.getStatus());
+        assertEquals(5.0, booking.getFeeLast(), 0.0001);
+        assertEquals("REBOOK", booking.getFeeType());
+        
+        // New booking should be created for flight 2
+        assertEquals(2, c.getBookings().size());
+        Booking newBooking = c.getBookings().get(1);
+        assertEquals(2, newBooking.getFlight().getId());
+        assertEquals(235.0, newBooking.getBookingPrice(), 0.5);
+        assertEquals(BookingStatus.ACTIVE, newBooking.getStatus());
     }
 }

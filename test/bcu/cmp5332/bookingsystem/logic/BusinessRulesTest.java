@@ -4,6 +4,7 @@ import bcu.cmp5332.bookingsystem.commands.AddBooking;
 import bcu.cmp5332.bookingsystem.commands.CancelBooking;
 import bcu.cmp5332.bookingsystem.commands.UpdateBooking;
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
+import bcu.cmp5332.bookingsystem.model.BookingStatus;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
@@ -132,8 +133,12 @@ public class BusinessRulesTest {
 
         new CancelBooking(1, 1).execute(fbs);
 
+        // Passenger should be removed from flight
         assertFalse(f.getPassengers().contains(c));
-        assertEquals(0, c.getBookings().size());
+        
+        // Booking should be marked CANCELED, not deleted
+        assertEquals(1, c.getBookings().size());
+        assertEquals(BookingStatus.CANCELED, c.getBookings().get(0).getStatus());
     }
 
     @Test

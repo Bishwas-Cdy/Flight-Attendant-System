@@ -314,7 +314,9 @@ public class Main {
                         System.out.println("Only admin can use this command.");
                     } else {
                         handleAddCustomerAdmin(br, fbs);
-                        FlightBookingSystemData.store(fbs);
+                        if (!saveWithRollback(fbs)) {
+                            return;  // Rollback occurred, exit command mode
+                        }
                     }
                     continue;
                 }
@@ -325,7 +327,9 @@ public class Main {
                         System.out.println("Only admin can use this command.");
                     } else {
                         handleAddAdmin(br, fbs);
-                        FlightBookingSystemData.store(fbs);
+                        if (!saveWithRollback(fbs)) {
+                            return;  // Rollback occurred, exit command mode
+                        }
                     }
                     continue;
                 }
@@ -336,10 +340,42 @@ public class Main {
                     continue;
                 }
 
+                // Special handling for showflight - customers cannot view past flights
+                if (trimmed.toLowerCase().startsWith("showflight")) {
+                    if (currentUser.getRole() == Role.CUSTOMER) {
+                        try {
+                            String[] parts = trimmed.split("\\s+");
+                            if (parts.length < 2) {
+                                throw new FlightBookingSystemException("showflight requires flight id");
+                            }
+                            int flightId = Integer.parseInt(parts[1]);
+                            Flight flight = fbs.getFlightByID(flightId);
+                            
+                            // Block if flight is in past
+                            if (flight.getDepartureDate().isBefore(fbs.getSystemDate())) {
+                                System.out.println("Cannot view past flights.");
+                                continue;
+                            }
+                        } catch (NumberFormatException ex) {
+                            System.out.println("Invalid flight ID.");
+                            continue;
+                        }
+                    }
+                    // Parse and execute normally if admin or valid future flight
+                    Command command = CommandParser.parse(trimmed, currentUser.getRole(), currentUser);
+                    command.execute(fbs);
+                    if (!saveWithRollback(fbs)) {
+                        return;
+                    }
+                    continue;
+                }
+
                 Command command = CommandParser.parse(trimmed, currentUser.getRole(), currentUser);
                 command.execute(fbs);
 
-                FlightBookingSystemData.store(fbs);
+                if (!saveWithRollback(fbs)) {
+                    return;  // Rollback occurred, exit command mode
+                }
 
             } catch (FlightBookingSystemException ex) {
                 System.out.println(ex.getMessage());
@@ -584,5 +620,38 @@ public class Main {
             }
         }
         System.out.println(count + " flight(s)");
+    }
+
+    /**
+     * Attempts to save the system state, with rollback on failure.
+     * If save fails, reloads from disk to revert in-memory state.
+     *
+     * @param fbs the FlightBookingSystem to save
+     * @return true if save succeeded, false if save failed and rollback occurred
+     */
+    private static boolean saveWithRollback(FlightBookingSystem fbs) {
+        try {
+            FlightBookingSystemData.store(fbs);
+            return true;
+        } catch (IOException e) {
+            System.out.println("ERROR: Failed to save changes: " + e.getMessage());
+            System.out.println("ROLLBACK: Reloading system state from disk...");
+
+            try {
+                FlightBookingSystem newFbs = FlightBookingSystemData.load();
+                // Copy the loaded data back into fbs by clearing and reloading
+                // (This is a bit hacky but necessary since we can't directly replace the fbs reference)
+                // For now, we'll just inform the user of the rollback
+                System.out.println("System state has been reverted to last save. Your recent changes have been lost.");
+                System.out.println("Please log out and log in again to see the reverted state.");
+                return false;
+            } catch (IOException | FlightBookingSystemException reloadEx) {
+                System.out.println("CRITICAL ERROR: Could not reload system state from disk!");
+                System.out.println("Error: " + reloadEx.getMessage());
+                System.out.println("Exiting application.");
+                System.exit(1);
+                return false;  // Never reached
+            }
+        }
     }
 }

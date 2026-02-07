@@ -12,6 +12,9 @@ public class Booking {
     private Flight flight;
     private LocalDate bookingDate;
     private double bookingPrice;
+    private BookingStatus status;
+    private double feeLast;
+    private String feeType;
 
     /**
      * Creates a booking and stores the flight base price as booking price.
@@ -37,6 +40,9 @@ public class Booking {
         this.flight = flight;
         this.bookingDate = bookingDate;
         this.bookingPrice = bookingPrice;
+        this.status = BookingStatus.ACTIVE;
+        this.feeLast = 0.0;
+        this.feeType = null;
     }
 
     public Customer getCustomer() {
@@ -76,5 +82,59 @@ public class Booking {
      */
     public void setBookingPrice(double bookingPrice) {
         this.bookingPrice = bookingPrice;
+    }
+
+    /**
+     * Returns the current status of the booking.
+     *
+     * @return booking status (ACTIVE or CANCELED)
+     */
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Sets the status of the booking.
+     *
+     * @param status the booking status
+     */
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * Returns the fee applied in the last transaction (rebooking or cancellation).
+     *
+     * @return the fee amount
+     */
+    public double getFeeLast() {
+        return feeLast;
+    }
+
+    /**
+     * Sets the fee applied in the last transaction.
+     *
+     * @param feeLast the fee amount
+     */
+    public void setFeeLast(double feeLast) {
+        this.feeLast = feeLast;
+    }
+
+    /**
+     * Returns the type of fee applied (e.g., "REBOOK", "CANCEL").
+     *
+     * @return the fee type
+     */
+    public String getFeeType() {
+        return feeType;
+    }
+
+    /**
+     * Sets the type of fee applied.
+     *
+     * @param feeType the fee type
+     */
+    public void setFeeType(String feeType) {
+        this.feeType = feeType;
     }
 }

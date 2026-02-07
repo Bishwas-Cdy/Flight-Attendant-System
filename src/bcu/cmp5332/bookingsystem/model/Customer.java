@@ -15,7 +15,7 @@ public class Customer {
     private int id;
     private String name;
     private String phone;
-    private boolean active = true;
+    private boolean deleted = false;
 
     private final List<Booking> bookings = new ArrayList<>();
 
@@ -67,8 +67,18 @@ public class Customer {
             sb.append("* Booking date: ")
                     .append(b.getBookingDate().format(dtf))
                     .append(" | Price: ")
-                    .append(String.format("%.2f", b.getBookingPrice()))
-                    .append(" | Flight #").append(f.getId())
+                    .append(String.format("%.2f", b.getBookingPrice()));
+
+            // Show status and fees
+            if (b.getStatus() == BookingStatus.CANCELED) {
+                sb.append(" | Status: CANCELED");
+                if (b.getFeeType() != null) {
+                    sb.append(" (").append(b.getFeeType()).append(" Fee: ")
+                            .append(String.format("%.2f", b.getFeeLast())).append(")");
+                }
+            }
+
+            sb.append(" | Flight #").append(f.getId())
                     .append(" - ").append(f.getFlightNumber())
                     .append(" - ").append(f.getOrigin()).append(" to ").append(f.getDestination())
                     .append(" on ").append(f.getDepartureDate().format(dtf))
@@ -93,7 +103,8 @@ public class Customer {
 
         Flight newFlight = booking.getFlight();
         for (Booking existing : bookings) {
-            if (existing.getFlight().getId() == newFlight.getId()) {
+            // Only check for duplicates with ACTIVE bookings (allow rebooking canceled flights)
+            if (existing.getStatus() == BookingStatus.ACTIVE && existing.getFlight().getId() == newFlight.getId()) {
                 throw new FlightBookingSystemException(
                         "Customer already has a booking for that flight.");
             }
@@ -166,23 +177,23 @@ public class Customer {
     }
 
     /**
-     * Indicates whether the customer account is active.
+     * Indicates whether the customer account is active (not deleted).
      */
     public boolean isActive() {
-        return active;
+        return !deleted;
     }
 
     /**
-     * Deactivates the customer account.
+     * Deactivates (deletes) the customer account.
      */
     public void deactivate() {
-        this.active = false;
+        this.deleted = true;
     }
 
     /**
      * Reactivates the customer account.
      */
     public void reactivate() {
-        this.active = true;
+        this.deleted = false;
     }
 }

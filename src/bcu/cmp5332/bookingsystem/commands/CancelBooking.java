@@ -2,6 +2,7 @@ package bcu.cmp5332.bookingsystem.commands;
 
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.BookingStatus;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
@@ -28,7 +29,7 @@ public class CancelBooking implements Command {
 
     /**
      * Executes the cancel booking command.
-     * Cancels the booking and calculates refund amount after fee deduction.
+     * Marks the booking as CANCELED, stores the cancellation fee, and removes passenger from flight.
      *
      * @param fbs the flight booking system
      * @throws FlightBookingSystemException if booking not found or cancellation fails
@@ -44,6 +45,11 @@ public class CancelBooking implements Command {
             throw new FlightBookingSystemException("Booking not found for this customer and flight.");
         }
 
+        // Only allow cancellation of ACTIVE bookings
+        if (booking.getStatus() != BookingStatus.ACTIVE) {
+            throw new FlightBookingSystemException("Booking is already canceled.");
+        }
+
         double bookingPrice = booking.getBookingPrice();
         double fee = bookingPrice * 0.10; // 10%
         if (fee < 5.0) {
@@ -55,8 +61,12 @@ public class CancelBooking implements Command {
             refund = 0;
         }
 
-        // Remove booking from customer and passenger from flight
-        customer.cancelBookingForFlight(flight);
+        // Mark booking as CANCELED and store fee information
+        booking.setStatus(BookingStatus.CANCELED);
+        booking.setFeeLast(fee);
+        booking.setFeeType("CANCEL");
+
+        // Remove passenger from flight
         flight.removePassenger(customer);
 
         System.out.println("Booking cancelled successfully.");
@@ -66,7 +76,7 @@ public class CancelBooking implements Command {
 
     private Booking findBooking(Customer customer, int flightId) {
         for (Booking b : customer.getBookings()) {
-            if (b.getFlight().getId() == flightId) {
+            if (b.getFlight().getId() == flightId && b.getStatus() == BookingStatus.ACTIVE) {
                 return b;
             }
         }

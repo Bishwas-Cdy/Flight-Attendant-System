@@ -2,6 +2,7 @@ package bcu.cmp5332.bookingsystem.data;
 
 import bcu.cmp5332.bookingsystem.main.FlightBookingSystemException;
 import bcu.cmp5332.bookingsystem.model.Booking;
+import bcu.cmp5332.bookingsystem.model.BookingStatus;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
@@ -23,6 +24,7 @@ public class BookingDataManager implements DataManager {
 
     /**
      * Loads bookings from the bookings.txt file and adds them to the system.
+     * Format: customerId::flightId::bookingDate::bookingPrice::status::feeLast::feeType::
      *
      * @param fbs the FlightBookingSystem to add loaded bookings to
      * @throws IOException if file reading fails
@@ -69,9 +71,34 @@ public class BookingDataManager implements DataManager {
 
                     Booking booking = new Booking(customer, flight, bookingDate, bookingPrice);
 
-                    // Rebuild relationships
+                    // Load status (backward compatible - default to ACTIVE)
+                    if (parts.length > 4 && parts[4] != null && !parts[4].trim().isEmpty()) {
+                        try {
+                            booking.setStatus(BookingStatus.valueOf(parts[4].trim()));
+                        } catch (IllegalArgumentException e) {
+                            booking.setStatus(BookingStatus.ACTIVE);
+                        }
+                    }
+
+                    // Load feeLast (backward compatible - default to 0.0)
+                    if (parts.length > 5 && parts[5] != null && !parts[5].trim().isEmpty()) {
+                        try {
+                            booking.setFeeLast(Double.parseDouble(parts[5].trim()));
+                        } catch (NumberFormatException e) {
+                            booking.setFeeLast(0.0);
+                        }
+                    }
+
+                    // Load feeType (backward compatible - default to null)
+                    if (parts.length > 6 && parts[6] != null && !parts[6].trim().isEmpty()) {
+                        booking.setFeeType(parts[6].trim());
+                    }
+
+                    // Rebuild relationships (even for canceled bookings, we keep them in the system)
                     customer.addBooking(booking);
-                    flight.addPassenger(customer);
+                    if (booking.getStatus() == BookingStatus.ACTIVE) {
+                        flight.addPassenger(customer);
+                    }
 
                 } catch (Exception ex) {
                     throw new FlightBookingSystemException(
@@ -85,6 +112,7 @@ public class BookingDataManager implements DataManager {
 
     /**
      * Saves all bookings from the system to the bookings.txt file.
+     * Format: customerId::flightId::bookingDate::bookingPrice::status::feeLast::feeType::
      *
      * @param fbs the FlightBookingSystem containing bookings to save
      * @throws IOException if file writing fails
@@ -99,6 +127,9 @@ public class BookingDataManager implements DataManager {
                     out.print(booking.getFlight().getId() + SEPARATOR);
                     out.print(booking.getBookingDate() + SEPARATOR);
                     out.print(booking.getBookingPrice() + SEPARATOR);
+                    out.print(booking.getStatus() + SEPARATOR);
+                    out.print(booking.getFeeLast() + SEPARATOR);
+                    out.print(booking.getFeeType() != null ? booking.getFeeType() : "" + SEPARATOR);
                     out.println();
                 }
             }
