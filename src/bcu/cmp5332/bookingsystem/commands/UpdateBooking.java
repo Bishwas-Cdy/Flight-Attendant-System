@@ -10,7 +10,8 @@ import java.time.temporal.ChronoUnit;
 
 /**
  * Updates an existing booking from one flight to another with dynamic pricing.
- * Rebooking is not allowed to past flights. Applies a rebooking fee.
+ * Rebooking is not allowed from or to past flights. Applies a rebooking fee.
+ * Shows refund/credit if old flight price was higher than new flight price plus fee.
  */
 public class UpdateBooking implements Command {
 
@@ -33,7 +34,8 @@ public class UpdateBooking implements Command {
 
     /**
      * Executes the update booking command.
-     * Cancels old booking, applies rebooking fee, and creates new booking with dynamic pricing.
+     * Validates that old flight has not departed, cancels old booking, applies rebooking fee,
+     * and creates new booking with dynamic pricing. Shows refund/credit if customer overpaid.
      *
      * @param fbs the flight booking system
      * @throws FlightBookingSystemException if update cannot be completed
@@ -52,6 +54,11 @@ public class UpdateBooking implements Command {
 
         if (oldFlightId == newFlightId) {
             throw new FlightBookingSystemException("Old flight and new flight cannot be the same.");
+        }
+
+        // Block rebooking from past flights
+        if (oldFlight.getDepartureDate().isBefore(fbs.getSystemDate())) {
+            throw new FlightBookingSystemException("Cannot rebook. Old flight has already departed.");
         }
 
         // Past-flight restriction for the NEW flight
@@ -101,8 +108,22 @@ public class UpdateBooking implements Command {
         newFlight.addPassenger(customer);
 
         System.out.println("Booking updated successfully.");
-        System.out.println("Rebooking fee: " + String.format("%.2f", rebookFee));
+        System.out.println("Old booking price: " + String.format("%.2f", oldPrice));
+        System.out.println("Rebooking fee (5% of old price, minimum $2): " + String.format("%.2f", rebookFee));
+        System.out.println("New flight base price: " + String.format("%.2f", newDynamicPrice));
         System.out.println("New booking price: " + String.format("%.2f", booking.getBookingPrice()));
+
+        // Calculate and show refund/credit if applicable
+        double refundAfterFee = oldPrice - rebookFee;
+        double amountToPay = booking.getBookingPrice() - refundAfterFee;
+
+        if (amountToPay < 0) {
+            System.out.println("Credit to your account: " + String.format("%.2f", -amountToPay));
+        } else if (amountToPay > 0) {
+            System.out.println("Amount to pay: " + String.format("%.2f", amountToPay));
+        } else {
+            System.out.println("No additional payment required.");
+        }
     }
 
     private Booking findBooking(Customer customer, int flightId) {
