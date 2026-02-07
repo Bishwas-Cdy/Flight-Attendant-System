@@ -29,15 +29,15 @@ public interface Command {
             + "\texit                                          exits the program";
 
     public static final String CUSTOMER_HELP = "Commands:\n"
-            + "\tlistflights                                   print all flights\n"
-            + "\tshowflight [flight id]                        show flight details\n"
-            + "\tshowcustomer [your id]                        show your customer details\n"
-            + "\taddbooking [your id] [flight id]              add a new booking\n"
-            + "\tcancelbooking [your id] [flight id]           cancel a booking\n"
-            + "\tupdatebooking [your id] [old flight id]       [new flight id]\tupdate a booking\n"
-            + "\tloadgui                                       loads the GUI version of the app\n"
-            + "\thelp                                          prints this help message\n"
-            + "\texit                                          exits the program";
+            + "\tlistflights                                                print all flights\n"
+            + "\tshowflight [flight id]                                     show flight details\n"
+            + "\tshowcustomer [your id]                                     show your customer details\n"
+            + "\taddbooking [your id] [flight id]                           add a new booking\n"
+            + "\tcancelbooking [your id] [flight id]                        cancel a booking\n"
+            + "\tupdatebooking [your id] [old flight id][new flight id]     update a booking\n"
+            + "\tloadgui                                                    loads the GUI version of the app\n"
+            + "\thelp                                                       prints this help message\n"
+            + "\texit                                                       exits the program";
 
     /**
      * Executes this command on the given FlightBookingSystem.
