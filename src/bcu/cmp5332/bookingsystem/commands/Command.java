@@ -32,7 +32,7 @@ public interface Command {
     public static final String CUSTOMER_HELP = "Commands:\n"
             + "\tlistflights                                                print all flights\n"
             + "\tshowflight [flight id]                                     show flight details\n"
-            + "\tshowcustomer [your id]                                     show your customer details\n"
+            + "\tshowcustomer                                               show your customer details\n"
             + "\taddbooking [your id] [flight id]                           add a new booking\n"
             + "\tcancelbooking [your id] [flight id]                        cancel a booking\n"
             + "\tupdatebooking [your id] [old flight id][new flight id]     update a booking\n"

@@ -190,6 +190,24 @@ public class GuiAuthMenu extends JFrame {
             UserDataManager udm = FlightBookingSystemData.getUserDataManager();
             AuthService authService = new AuthService(udm.getUsers());
 
+            // Check if email already exists
+            if (authService.emailExists(email)) {
+                JOptionPane.showMessageDialog(this,
+                        "Email already exists.",
+                        "Validation Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Check if phone already exists
+            if (fbs.phoneExists(phone)) {
+                JOptionPane.showMessageDialog(this,
+                        "Phone number already exists.",
+                        "Validation Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             // Create user
             User user = authService.registerCustomer(first, middle, last, email, password);
 

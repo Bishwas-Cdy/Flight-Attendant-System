@@ -133,4 +133,23 @@ public class FlightBookingSystem {
 
         customers.put(customer.getId(), customer);
     }
+
+    /**
+     * Checks if a phone number already exists in the system.
+     *
+     * @param phone the phone number to check
+     * @return true if phone exists, false otherwise
+     */
+    public boolean phoneExists(String phone) {
+        if (phone == null || phone.trim().isEmpty()) {
+            return false;
+        }
+
+        for (Customer customer : customers.values()) {
+            if (customer.getPhone().equals(phone.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

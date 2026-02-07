@@ -119,13 +119,19 @@ public class Main {
                     String phone;
                     while (true) {
                         System.out.print("Phone number (10 digits): ");
-                        phone = br.readLine();
+                        phone = br.readLine().trim();
 
-                        if (phone.matches("\\d{10}")) {
-                            break;
-                        } else {
+                        if (!phone.matches("\\d{10}")) {
                             System.out.println("Invalid phone number. It must contain exactly 10 digits.");
+                            continue;
                         }
+
+                        if (fbs.phoneExists(phone)) {
+                            System.out.println("Phone number already exists.");
+                            continue;
+                        }
+
+                        break;
                     }
 
                     try {
@@ -466,11 +472,17 @@ public class Main {
             System.out.print("Phone number (10 digits): ");
             phone = br.readLine().trim();
 
-            if (phone.matches("\\d{10}")) {
-                break;
-            } else {
+            if (!phone.matches("\\d{10}")) {
                 System.out.println("Invalid phone number. It must contain exactly 10 digits.");
+                continue;
             }
+
+            if (fbs.phoneExists(phone)) {
+                System.out.println("Phone number already exists.");
+                continue;
+            }
+
+            break;
         }
 
         try {

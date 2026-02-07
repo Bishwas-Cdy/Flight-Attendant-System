@@ -191,6 +191,15 @@ public class CustomersPanel extends JPanel {
                 return;
             }
 
+            // Check if phone already exists
+            if (fbs.phoneExists(phone)) {
+                JOptionPane.showMessageDialog(this,
+                        "Phone number already exists.",
+                        "Validation Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             // Create user account
             User user = authService.registerCustomer(firstName, middleName, lastName, email, password);
 
