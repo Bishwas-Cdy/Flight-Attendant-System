@@ -9,7 +9,6 @@ import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.gui.GuiAuthMenu;
 import bcu.cmp5332.bookingsystem.model.Customer;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -288,8 +287,11 @@ public class Main {
                             continue;
                         }
 
-                        // Replace first numeric argument with logged in customer's id
-                        trimmed = forceCustomerId(trimmed, cid);
+                        // Validate that customer ID in command matches logged-in customer
+                        if (!validateCustomerId(trimmed, cid)) {
+                            System.out.println("Error: You can only manage your own bookings. Your customer ID is " + cid + ".");
+                            continue;
+                        }
                     }
                 }
 
@@ -322,6 +324,25 @@ public class Main {
             if (i < parts.length - 1) sb.append(" ");
         }
         return sb.toString();
+    }
+
+    private static boolean validateCustomerId(String commandLine, int loggedInCustomerId) {
+        // Validates that the customer ID in the booking command matches the logged-in customer
+        // command args:
+        // addbooking <custId> <flightId>
+        // cancelbooking <custId> <flightId>
+        // updatebooking <custId> <oldFlightId> <newFlightId>
+        // editbooking <custId> <newFlightId>
+        try {
+            String[] parts = commandLine.trim().split("\\s+");
+            if (parts.length >= 2) {
+                int providedCustomerId = Integer.parseInt(parts[1]);
+                return providedCustomerId == loggedInCustomerId;
+            }
+            return false;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
     }
 
     private static boolean isValidEmail(String email) {
