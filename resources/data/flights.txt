@@ -5,4 +5,4 @@
 5::MA5048::Taiwan::Dubai::2026-03-01::30::200.0::true::
 6::AR3201::Texas::Washington DC::2026-03-05::20::250.0::true::
 7::AA101::New York::Boston::2026-02-10::100::150.0::true::
-8::LA0294::Boston::Washington DC::2026-05-20::2::600.0::true::
+8::LA0294::Boston::Washington DC::2026-05-20::2::600.0::false::

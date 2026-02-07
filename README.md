@@ -40,7 +40,7 @@ The Flight Booking System is a university-level Java application that implements
 
 ## Features
 
-### ✅ Authentication & User Management
+###  Authentication & User Management
 - Email-based user authentication with unique email validation
 - 10-digit phone number validation (globally unique)
 - Self-service customer registration with full validation
@@ -49,7 +49,7 @@ The Flight Booking System is a university-level Java application that implements
 - Account deactivation with reactivation capability
 - Soft-delete architecture (no permanent deletion)
 
-### ✅ Flight Management
+###  Flight Management
 - Add/edit/deactivate flights with capacity and pricing
 - Dynamic pricing based on seat occupancy and days to departure
 - Flight capacity enforcement (prevents overbooking)
@@ -57,14 +57,14 @@ The Flight Booking System is a university-level Java application that implements
 - Future-flights filtering for customers
 - Soft-delete flights (can be reactivated)
 
-### ✅ Customer Management
+###  Customer Management
 - Add customers with email and phone validation
 - Customer profile viewing with booking history
 - Booking history (all bookings with status and fees)
 - Soft-delete customers (can be reactivated)
 - Unique email and phone enforcement
 
-### ✅ Booking Management
+###  Booking Management
 - Book flights with automatic dynamic pricing
 - Cancel bookings with calculated cancellation fees (10%, min $5)
 - Update bookings to different flights with rebooking fees (5%, min $2)
@@ -73,14 +73,14 @@ The Flight Booking System is a university-level Java application that implements
 - Booking status tracking (ACTIVE, CANCELED)
 - Fee history persistence
 
-### ✅ Data & Persistence
+###  Data & Persistence
 - File-based CSV storage (flights, customers, bookings, users)
 - Atomic persistence (changes saved after each command)
 - System date management (admin-controlled for testing)
 - Rollback support on save failure
 - Data integrity validation
 
-### ✅ User Interface
+###  User Interface
 - **Command-Line Interface**: Full command mode with help system
 - **Graphical Interface**: Professional Swing GUI with tabbed navigation
 - **Dual Authentication**: Login works in both CLI and GUI modes
@@ -347,16 +347,16 @@ Credit/Charge: Depends on new flight price
 
 ### Business Rules Enforced
 
-- ✅ Cannot book deactivated customers
-- ✅ Cannot book deactivated flights
-- ✅ Cannot book departed flights (date < system date)
-- ✅ Cannot exceed flight capacity
-- ✅ Duplicate bookings per customer per flight prevented
-- ✅ Email addresses must be globally unique
-- ✅ Phone numbers must be 10 digits and globally unique
-- ✅ Deactivated accounts cannot login
-- ✅ Customers can only see future flights
-- ✅ After cancellation, customer can rebook same flight
+-  Cannot book deactivated customers
+-  Cannot book deactivated flights
+-  Cannot book departed flights (date < system date)
+-  Cannot exceed flight capacity
+-  Duplicate bookings per customer per flight prevented
+-  Email addresses must be globally unique
+-  Phone numbers must be 10 digits and globally unique
+-  Deactivated accounts cannot login
+-  Customers can only see future flights
+-  After cancellation, customer can rebook same flight
 
 ---
 
@@ -532,16 +532,16 @@ ID::FirstName::MiddleName::LastName::Email::Password::Role::CustomerID
 
 ## Learning Outcomes Demonstrated
 
-✅ Object-Oriented Programming (encapsulation, inheritance, interfaces)  
-✅ Design Patterns (Command, Factory, Strategy, MVC, Repository)  
-✅ Data Persistence and File I/O  
-✅ GUI Development (Swing/AWT)  
-✅ Authentication & Authorization  
-✅ Business Logic Implementation  
-✅ Exception Handling & Validation  
-✅ Unit Testing (JUnit 5)  
-✅ Code Documentation (Javadoc)  
-✅ Dual Interface Design (CLI + GUI)  
+ Object-Oriented Programming (encapsulation, inheritance, interfaces)  
+ Design Patterns (Command, Factory, Strategy, MVC, Repository)  
+ Data Persistence and File I/O  
+ GUI Development (Swing/AWT)  
+ Authentication & Authorization  
+ Business Logic Implementation  
+ Exception Handling & Validation  
+ Unit Testing (JUnit 5)  
+ Code Documentation (Javadoc)  
+ Dual Interface Design (CLI + GUI)  
 
 ---
 
@@ -585,5 +585,5 @@ For issues or questions:
 
 **Last Updated**: February 7, 2026  
 **Status**: COMPLETE - All features implemented, tested, and documented  
-**Compilation**: ✅ 0 errors (49 source files)  
-**Test Suite**: ✅ 50+ tests passing
+**Compilation**:  0 errors (49 source files)  
+**Test Suite**:  50+ tests passing

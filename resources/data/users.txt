@@ -19,3 +19,5 @@
 19::John::::Doe::john@test.com::pass123::CUSTOMER::16::
 20::Bishal::::Mahato::bishal@gamil.com::pass123::CUSTOMER::17::
 21::Java::::Java::java@gmail.com::pass123::CUSTOMER::18::
+22::Testing::::User::user@gmail.com::pass123::CUSTOMER::19::
+23::Sam::::Sulek::samsulek@gmail.com::sam@admin::ADMIN::::
