@@ -8,12 +8,14 @@ import bcu.cmp5332.bookingsystem.commands.Command;
 import bcu.cmp5332.bookingsystem.data.FlightBookingSystemData;
 import bcu.cmp5332.bookingsystem.gui.GuiAuthMenu;
 import bcu.cmp5332.bookingsystem.model.Customer;
+import bcu.cmp5332.bookingsystem.model.Flight;
 import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.awt.Color;
 import javax.swing.UIManager;
+import java.util.List;
 
 /**
  * Entry point for the Flight Booking System command-line interface.
@@ -328,6 +330,12 @@ public class Main {
                     continue;
                 }
 
+                // Special handling for listflights - customers see only future flights
+                if (trimmed.toLowerCase().startsWith("listflights")) {
+                    handleListFlights(fbs);
+                    continue;
+                }
+
                 Command command = CommandParser.parse(trimmed, currentUser.getRole(), currentUser);
                 command.execute(fbs);
 
@@ -555,5 +563,26 @@ public class Main {
         } catch (FlightBookingSystemException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
+    }
+
+    private static void handleListFlights(FlightBookingSystem fbs) {
+        List<Flight> flights;
+
+        // Customers see only future flights (departure date > system date)
+        // Admins see all active flights
+        if (currentUser.getRole() == Role.CUSTOMER) {
+            flights = fbs.getFutureFlights(fbs.getSystemDate());
+        } else {
+            flights = fbs.getFlights();
+        }
+
+        int count = 0;
+        for (Flight flight : flights) {
+            if (flight.isActive()) {
+                System.out.println(flight.getDetailsShort());
+                count++;
+            }
+        }
+        System.out.println(count + " flight(s)");
     }
 }

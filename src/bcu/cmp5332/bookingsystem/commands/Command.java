@@ -30,7 +30,7 @@ public interface Command {
             + "\texit                                          exits the program";
 
     public static final String CUSTOMER_HELP = "Commands:\n"
-            + "\tlistflights                                                print all flights\n"
+            + "\tlistflights                                                print future flights only\n"
             + "\tshowflight [flight id]                                     show flight details\n"
             + "\tshowcustomer                                               show your customer details\n"
             + "\taddbooking [your id] [flight id]                           add a new booking\n"

@@ -52,6 +52,25 @@ public class FlightBookingSystem {
     }
 
     /**
+     * Returns only future flights (departing after systemDate) that are active.
+     * Used by customers to see bookable flights only.
+     *
+     * @param systemDate the current system date
+     * @return list of future flights
+     */
+    public List<Flight> getFutureFlights(LocalDate systemDate) {
+        List<Flight> future = new ArrayList<>();
+        
+        for (Flight flight : flights.values()) {
+            if (flight.isActive() && flight.getDepartureDate().isAfter(systemDate)) {
+                future.add(flight);
+            }
+        }
+        
+        return Collections.unmodifiableList(future);
+    }
+
+    /**
      * Returns a flight by id.
      *
      * @param id flight id

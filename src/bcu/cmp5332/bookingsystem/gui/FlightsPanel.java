@@ -78,7 +78,16 @@ public class FlightsPanel extends JPanel {
     public void loadFlights() {
         model.setRowCount(0);
 
-        List<Flight> flights = fbs.getFlights();
+        List<Flight> flights;
+        
+        // Customers see only future flights (departure date > system date)
+        // Admins see all flights
+        if (adminMode) {
+            flights = fbs.getFlights();
+        } else {
+            flights = fbs.getFutureFlights(fbs.getSystemDate());
+        }
+        
         for (Flight f : flights) {
             model.addRow(new Object[]{
                     f.getId(),
