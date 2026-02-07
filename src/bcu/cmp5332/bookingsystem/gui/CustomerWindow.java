@@ -16,6 +16,7 @@ public class CustomerWindow extends JFrame {
     private final GuiSession session;
 
     private final JTabbedPane tabs = new JTabbedPane();
+    private JLabel dateLabel;
 
     private final FlightsPanel flightsPanel;
     private final BookingsPanel bookingsPanel;
@@ -28,6 +29,7 @@ public class CustomerWindow extends JFrame {
      * @param session the authenticated customer session
      */
     public CustomerWindow(FlightBookingSystem fbs, GuiSession session) {
+        applyLightTheme();
         this.fbs = fbs;
         this.session = session;
 
@@ -55,6 +57,14 @@ public class CustomerWindow extends JFrame {
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(tabs, BorderLayout.CENTER);
+
+        // Add status bar with system date
+        JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        statusBar.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        dateLabel = new JLabel("System Date: " + fbs.getSystemDate());
+        dateLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        statusBar.add(dateLabel);
+        getContentPane().add(statusBar, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -91,6 +101,31 @@ public class CustomerWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "Saved successfully.", "Saved", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, ex.toString(), "Save Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private static void applyLightTheme() {
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            
+            // Force light colors explicitly to prevent dark mode
+            UIManager.put("Panel.background", new Color(238, 238, 238));
+            UIManager.put("Button.background", new Color(218, 218, 218));
+            UIManager.put("Button.foreground", Color.BLACK);
+            UIManager.put("Label.foreground", Color.BLACK);
+            UIManager.put("TextField.background", Color.WHITE);
+            UIManager.put("TextField.foreground", Color.BLACK);
+            UIManager.put("TextArea.background", Color.WHITE);
+            UIManager.put("TextArea.foreground", Color.BLACK);
+            UIManager.put("Table.background", Color.WHITE);
+            UIManager.put("Table.foreground", Color.BLACK);
+            UIManager.put("Table.gridColor", Color.LIGHT_GRAY);
+            UIManager.put("ComboBox.background", Color.WHITE);
+            UIManager.put("ComboBox.foreground", Color.BLACK);
+            UIManager.put("OptionPane.background", new Color(238, 238, 238));
+            UIManager.put("OptionPane.messageForeground", Color.BLACK);
+        } catch (Exception ex) {
+            // Silently ignore
         }
     }
 }

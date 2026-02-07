@@ -17,6 +17,7 @@ public class FlightBookingSystemData {
     private static final List<DataManager> dataManagers = new ArrayList<>();
 
     private static final UserDataManager userDataManager = new UserDataManager();
+    private static final SystemDateManager systemDateManager = new SystemDateManager();
 
     static {
         dataManagers.add(new FlightDataManager());
@@ -39,6 +40,9 @@ public class FlightBookingSystemData {
             dm.loadData(fbs);
         }
 
+        // Load system date from file
+        systemDateManager.loadData(fbs);
+
         // Users are not part of FlightBookingSystem object, so pass null
         userDataManager.loadData(null);
 
@@ -56,6 +60,9 @@ public class FlightBookingSystemData {
         for (DataManager dm : dataManagers) {
             dm.storeData(fbs);
         }
+
+        // Save system date to file
+        systemDateManager.storeData(fbs);
 
         // Users are not part of FlightBookingSystem object, so pass null
         userDataManager.storeData(null);

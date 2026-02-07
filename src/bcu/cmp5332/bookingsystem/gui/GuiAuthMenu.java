@@ -23,7 +23,33 @@ public class GuiAuthMenu extends JFrame {
 
     public GuiAuthMenu(FlightBookingSystem fbs) {
         this.fbs = fbs;
+        applyLightTheme();
         initialize();
+    }
+
+    private static void applyLightTheme() {
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            
+            // Force light colors explicitly to prevent dark mode
+            UIManager.put("Panel.background", new Color(238, 238, 238));
+            UIManager.put("Button.background", new Color(218, 218, 218));
+            UIManager.put("Button.foreground", Color.BLACK);
+            UIManager.put("Label.foreground", Color.BLACK);
+            UIManager.put("TextField.background", Color.WHITE);
+            UIManager.put("TextField.foreground", Color.BLACK);
+            UIManager.put("TextArea.background", Color.WHITE);
+            UIManager.put("TextArea.foreground", Color.BLACK);
+            UIManager.put("Table.background", Color.WHITE);
+            UIManager.put("Table.foreground", Color.BLACK);
+            UIManager.put("Table.gridColor", Color.LIGHT_GRAY);
+            UIManager.put("ComboBox.background", Color.WHITE);
+            UIManager.put("ComboBox.foreground", Color.BLACK);
+            UIManager.put("OptionPane.background", new Color(238, 238, 238));
+            UIManager.put("OptionPane.messageForeground", Color.BLACK);
+        } catch (Exception ex) {
+            // Silently ignore
+        }
     }
 
     private void initialize() {
@@ -35,7 +61,7 @@ public class GuiAuthMenu extends JFrame {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel title = new JLabel("=== Flight Booking System ===", SwingConstants.CENTER);
+        JLabel title = new JLabel("Welcome to Flight Booking System", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 14));
         panel.add(title);
 

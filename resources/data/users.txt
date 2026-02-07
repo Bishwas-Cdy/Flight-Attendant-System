@@ -3,3 +3,9 @@
 3::Bikalpa::::Bhattarai::bikalpa@gmail.com::bikalpa123::CUSTOMER::4::
 4::Test::::User::testuser1@gmail.com::test123::CUSTOMER::5::
 5::Test2::::User::testuser2@gmail.com::test123::CUSTOMER::6::
+6::Test::3::User::test3@gmail.com::test123::CUSTOMER::7::
+7::Test4::::User::test4@gmail.com::test123::CUSTOMER::8::
+8::Test5::::User::test5@gmail.com::test123::CUSTOMER::9::
+9::Ayush::::Dangol::ayush@system.com::ayush123::ADMIN::::
+10::Rythm::Jung::Thapa::r@system.com::r123::ADMIN::::
+

@@ -74,15 +74,15 @@ public class CommandParser {
             }
 
             if (cmd.equals("addcustomer")) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                // Special handling for addcustomer - should not reach here
+                // This is handled directly in Main.java
+                throw new FlightBookingSystemException("Error: addcustomer should be handled by Main, not CommandParser");
+            }
 
-                System.out.print("Customer Name: ");
-                String name = reader.readLine();
-
-                System.out.print("Phone Number: ");
-                String phone = reader.readLine();
-
-                return new AddCustomer(name, phone);
+            if (cmd.equals("addadmin")) {
+                // Special handling for addadmin - should not reach here
+                // This is handled directly in Main.java
+                throw new FlightBookingSystemException("Error: addadmin should be handled by Main, not CommandParser");
             }
 
             if (cmd.equals("loadgui")) {
@@ -93,8 +93,12 @@ public class CommandParser {
                 if (parts.length != 2) {
                     throw new FlightBookingSystemException("Usage: advancedate YYYY-MM-DD");
                 }
-                LocalDate newDate = LocalDate.parse(parts[1]);
-                return new AdvanceDate(newDate);
+                try {
+                    LocalDate newDate = LocalDate.parse(parts[1]);
+                    return new AdvanceDate(newDate);
+                } catch (java.time.format.DateTimeParseException ex) {
+                    throw new FlightBookingSystemException("Invalid date format. Please use YYYY-MM-DD (e.g., 2026-02-07)");
+                }
             }
 
             if (parts.length == 1) {

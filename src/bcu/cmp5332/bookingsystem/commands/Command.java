@@ -14,6 +14,7 @@ public interface Command {
             + "\tlistcustomers                                 print all customers\n"
             + "\taddflight                                     add a new flight (includes capacity and base price)\n"
             + "\taddcustomer                                   add a new customer\n"
+            + "\taddadmin                                      add a new admin account\n"
             + "\tshowflight [flight id]                        show flight details\n"
             + "\tshowcustomer [customer id]                    show customer details\n"
             + "\taddbooking [customer id] [flight id]          add a new booking\n"

@@ -88,6 +88,29 @@ public class AuthService {
     }
 
     /**
+     * Registers a new admin account (CLI mode).
+     * Used when admin CLI user creates another admin.
+     *
+     * @param first admin's first name
+     * @param middle admin's middle name
+     * @param last admin's last name
+     * @param email admin's email (must be unique)
+     * @param password admin's password
+     * @return the newly created Admin User
+     * @throws FlightBookingSystemException if email already exists or validation fails
+     */
+    public User registerAdmin(String first, String middle, String last,
+                              String email, String password) throws FlightBookingSystemException {
+
+        validateUniqueEmail(email);
+
+        int newId = users.size() + 1;
+        User admin = new User(newId, first, middle, last, email, password, Role.ADMIN, null);
+        users.add(admin);
+        return admin;
+    }
+
+    /**
      * Checks if an email is already registered in the system.
      *
      * @param email the email to check

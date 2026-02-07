@@ -12,6 +12,8 @@ import bcu.cmp5332.bookingsystem.model.FlightBookingSystem;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.awt.Color;
+import javax.swing.UIManager;
 
 /**
  * Entry point for the Flight Booking System command-line interface.
@@ -30,6 +32,9 @@ public class Main {
      * @throws FlightBookingSystemException if system operation fails
      */
     public static void main(String[] args) throws IOException, FlightBookingSystemException {
+
+        // Set consistent Light Look and Feel for all GUI windows
+        setGuiLookAndFeel();
 
         FlightBookingSystem fbs = FlightBookingSystemData.load();
         UserDataManager userDataManager = FlightBookingSystemData.getUserDataManager();
@@ -289,10 +294,32 @@ public class Main {
 
                         // Validate that customer ID in command matches logged-in customer
                         if (!validateCustomerId(trimmed, cid)) {
-                            System.out.println("Error: You can only manage your own bookings. Your customer ID is " + cid + ".");
+                            System.out.println("Error: You can manage only your own bookings. Your customer ID is " + cid + ".");
                             continue;
                         }
                     }
+                }
+
+                // Special handling for addcustomer - requires both User and Customer creation (admin only)
+                if (trimmed.toLowerCase().startsWith("addcustomer")) {
+                    if (currentUser.getRole() != Role.ADMIN) {
+                        System.out.println("Only admin can use this command.");
+                    } else {
+                        handleAddCustomerAdmin(br, fbs);
+                        FlightBookingSystemData.store(fbs);
+                    }
+                    continue;
+                }
+
+                // Special handling for addadmin - requires admin User creation (admin only)
+                if (trimmed.toLowerCase().startsWith("addadmin")) {
+                    if (currentUser.getRole() != Role.ADMIN) {
+                        System.out.println("Only admin can use this command.");
+                    } else {
+                        handleAddAdmin(br, fbs);
+                        FlightBookingSystemData.store(fbs);
+                    }
+                    continue;
                 }
 
                 Command command = CommandParser.parse(trimmed, currentUser.getRole(), currentUser);
@@ -345,6 +372,31 @@ public class Main {
         }
     }
 
+    private static void setGuiLookAndFeel() {
+        try {
+            // Use Metal Look and Feel for consistent light appearance
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            
+            // Force light colors explicitly to prevent dark mode
+            UIManager.put("Panel.background", new Color(238, 238, 238));
+            UIManager.put("Button.background", new Color(218, 218, 218));
+            UIManager.put("Button.foreground", Color.BLACK);
+            UIManager.put("Label.foreground", Color.BLACK);
+            UIManager.put("TextField.background", Color.WHITE);
+            UIManager.put("TextField.foreground", Color.BLACK);
+            UIManager.put("TextArea.background", Color.WHITE);
+            UIManager.put("TextArea.foreground", Color.BLACK);
+            UIManager.put("Table.background", Color.WHITE);
+            UIManager.put("Table.foreground", Color.BLACK);
+            UIManager.put("Table.gridColor", Color.LIGHT_GRAY);
+            UIManager.put("ComboBox.background", Color.WHITE);
+            UIManager.put("ComboBox.foreground", Color.BLACK);
+            
+        } catch (Exception ex) {
+            // Silently ignore - will use default Look and Feel
+        }
+    }
+
     private static boolean isValidEmail(String email) {
         if (email == null) {
             return false;
@@ -370,5 +422,126 @@ public class Main {
 
         return true;
 
+    }
+
+    private static void handleAddCustomerAdmin(BufferedReader br, FlightBookingSystem fbs) throws IOException {
+        System.out.println();
+        System.out.print("First name: ");
+        String first = br.readLine();
+
+        System.out.print("Middle name (press Enter if none): ");
+        String middle = br.readLine();
+
+        System.out.print("Last name: ");
+        String last = br.readLine();
+
+        // Email validation with uniqueness check
+        String email;
+        while (true) {
+            System.out.print("Email: ");
+            email = br.readLine().trim();
+
+            if (!isValidEmail(email)) {
+                System.out.println("Invalid email format. Please enter a valid email.");
+                continue;
+            }
+
+            UserDataManager udm = FlightBookingSystemData.getUserDataManager();
+            AuthService authService = new AuthService(udm.getUsers());
+            
+            if (authService.emailExists(email)) {
+                System.out.println("Email already exists.");
+                continue;
+            }
+
+            break;
+        }
+
+        System.out.print("Password: ");
+        String password = br.readLine();
+
+        // Phone validation
+        String phone;
+        while (true) {
+            System.out.print("Phone number (10 digits): ");
+            phone = br.readLine().trim();
+
+            if (phone.matches("\\d{10}")) {
+                break;
+            } else {
+                System.out.println("Invalid phone number. It must contain exactly 10 digits.");
+            }
+        }
+
+        try {
+            // Create user account
+            UserDataManager udm = FlightBookingSystemData.getUserDataManager();
+            AuthService authService = new AuthService(udm.getUsers());
+            User user = authService.registerCustomer(first, middle, last, email, password);
+
+            // Create customer record and link to user
+            int newCustomerId = fbs.getCustomers().size() + 1;
+            Customer customer = new Customer(newCustomerId, user.getFullName(), phone);
+            fbs.addCustomer(customer);
+
+            user.setCustomerId(newCustomerId);
+
+            FlightBookingSystemData.store(fbs);
+
+            System.out.println("Customer added successfully with ID " + newCustomerId);
+            System.out.println("Email: " + email);
+            System.out.println("Phone: " + phone);
+        } catch (FlightBookingSystemException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+    }
+
+    private static void handleAddAdmin(BufferedReader br, FlightBookingSystem fbs) throws IOException {
+        System.out.println();
+        System.out.print("First name: ");
+        String first = br.readLine();
+
+        System.out.print("Middle name (press Enter if none): ");
+        String middle = br.readLine();
+
+        System.out.print("Last name: ");
+        String last = br.readLine();
+
+        // Email validation with uniqueness check
+        String email;
+        while (true) {
+            System.out.print("Email: ");
+            email = br.readLine().trim();
+
+            if (!isValidEmail(email)) {
+                System.out.println("Invalid email format. Please enter a valid email.");
+                continue;
+            }
+
+            UserDataManager udm = FlightBookingSystemData.getUserDataManager();
+            AuthService authService = new AuthService(udm.getUsers());
+            
+            if (authService.emailExists(email)) {
+                System.out.println("Email already exists.");
+                continue;
+            }
+
+            break;
+        }
+
+        System.out.print("Password: ");
+        String password = br.readLine();
+
+        try {
+            // Create admin user account
+            UserDataManager udm = FlightBookingSystemData.getUserDataManager();
+            AuthService authService = new AuthService(udm.getUsers());
+            authService.registerAdmin(first, middle, last, email, password);
+
+            System.out.println("Admin account created successfully");
+            System.out.println("Email: " + email);
+        } catch (FlightBookingSystemException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
     }
 }
