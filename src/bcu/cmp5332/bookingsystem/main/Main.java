@@ -54,7 +54,7 @@ public class Main {
 
                 if ("1".equals(choice)) {
                     System.out.print("Email: ");
-                    String email = br.readLine();
+                    String email = br.readLine().trim();
 
                     System.out.print("Password: ");
                     String password = br.readLine();
@@ -94,13 +94,19 @@ public class Main {
                     String email;
                     while (true) {
                         System.out.print("Email: ");
-                        email = br.readLine();
+                        email = br.readLine().trim();
 
-                        if (isValidEmail(email)) {
-                            break;
-                        } else {
+                        if (!isValidEmail(email)) {
                             System.out.println("Invalid email format. Please enter a valid email.");
+                            continue;
                         }
+
+                        if (authService.emailExists(email)) {
+                            System.out.println("Email already exists.");
+                            continue;
+                        }
+
+                        break;
                     }
 
                     System.out.print("Password: ");
@@ -189,7 +195,7 @@ public class Main {
                     String last = br.readLine();
 
                     System.out.print("Email: ");
-                    String email = br.readLine();
+                    String email = br.readLine().trim();
 
                     System.out.print("Password: ");
                     String password = br.readLine();

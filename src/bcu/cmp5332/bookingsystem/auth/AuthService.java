@@ -87,11 +87,24 @@ public class AuthService {
         return admin;
     }
 
-    private void validateUniqueEmail(String email) throws FlightBookingSystemException {
+    /**
+     * Checks if an email is already registered in the system.
+     *
+     * @param email the email to check
+     * @return true if email exists, false otherwise
+     */
+    public boolean emailExists(String email) {
         for (User u : users) {
             if (u.getEmail().equalsIgnoreCase(email)) {
-                throw new FlightBookingSystemException("Email already exists.");
+                return true;
             }
+        }
+        return false;
+    }
+
+    private void validateUniqueEmail(String email) throws FlightBookingSystemException {
+        if (emailExists(email)) {
+            throw new FlightBookingSystemException("Email already exists.");
         }
         if (email == null || email.trim().isEmpty()) {
             throw new FlightBookingSystemException("Email cannot be empty.");

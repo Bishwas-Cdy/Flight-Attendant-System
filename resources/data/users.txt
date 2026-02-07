@@ -1,3 +1,5 @@
 1::System::Admin::User::admin@system.com::admin123::ADMIN::::
 2::Bishwas::::Chaudhary::bishwas@system.com::bishwas123::ADMIN::::
 3::Bikalpa::::Bhattarai::bikalpa@gmail.com::bikalpa123::CUSTOMER::4::
+4::Test::::User::testuser1@gmail.com::test123::CUSTOMER::5::
+5::Test2::::User::testuser2@gmail.com::test123::CUSTOMER::6::
